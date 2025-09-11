@@ -61,6 +61,11 @@ public class ButtonMovesObject : MonoBehaviour
     [Tooltip("Origin reference for the axis distance. If null, uses the target's initial position.")]
     public Transform limitOrigin;
 
+    // PASSENGERS ----------
+    [Header("Passengers (optional)")]
+    public PassengerZone passengerZone;               // assign the trigger inside your box
+    public bool movePassengersOnSnap = true;          // also apply delta on final snap
+
     // --- internal state ---
     private Coroutine _moveRoutine;       // target animation
     private Vector3 _btnRestLocalPos;
@@ -100,6 +105,10 @@ public class ButtonMovesObject : MonoBehaviour
             Vector3 axisDir = GetAxisDir();
             _btnPressedLocalPos = _btnRestLocalPos + axisDir * buttonTravel;
         }
+
+        // PASSENGERS: optional auto-wire owner for safety
+        if (passengerZone != null && passengerZone.owner == null)
+            passengerZone.owner = target;
     }
 
     // ----------- Events -----------
@@ -123,7 +132,6 @@ public class ButtonMovesObject : MonoBehaviour
             // If clamping results in effectively no movement, skip target move
             if ((dest - target.position).sqrMagnitude < 1e-9f)
             {
-                // Still animate the button if desired
                 if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
                 return;
             }
@@ -169,45 +177,34 @@ public class ButtonMovesObject : MonoBehaviour
         {
             t += Time.deltaTime / duration;
             float k = ease.Evaluate(Mathf.Clamp01(t));
-            target.position = Vector3.LerpUnclamped(start, dest, k);
+
+            // Compute next position (already clamped by dest)
+            Vector3 current = target.position;
+            Vector3 next = Vector3.LerpUnclamped(start, dest, k);
+
+            // PASSENGERS: move riders by the same delta
+            Vector3 delta = next - current;
+            if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
+                passengerZone.ApplyDelta(delta);
+
+            target.position = next;
             yield return null;
         }
 
-        if (snapExactlyAtEnd) target.position = dest;
+        if (snapExactlyAtEnd)
+        {
+            Vector3 final = dest;
+            Vector3 delta = final - target.position;
+
+            if (passengerZone != null && movePassengersOnSnap && delta.sqrMagnitude > 1e-12f)
+                passengerZone.ApplyDelta(delta);
+
+            target.position = final;
+        }
+
         _moveRoutine = null;
     }
 
-    // ----------- Button movement -----------
-    private void StartMoveButton(Vector3 destLocal)
-    {
-        if (buttonToTranslate == null) return;
-        if (!allowInterrupt && _buttonRoutine != null) return;
-        if (_buttonRoutine != null) StopCoroutine(_buttonRoutine);
-        _buttonRoutine = StartCoroutine(MoveButtonTo(destLocal));
-    }
-
-    private IEnumerator MoveButtonTo(Vector3 destLocal)
-    {
-        Vector3 start = buttonToTranslate.localPosition;
-        float totalDist = Vector3.Distance(start, destLocal);
-        if (totalDist < 1e-5f) { _buttonRoutine = null; yield break; }
-
-        float duration = Mathf.Max(0.0001f, totalDist / buttonSpeed);
-        float t = 0f;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime / duration;
-            float k = buttonEase.Evaluate(Mathf.Clamp01(t));
-            buttonToTranslate.localPosition = Vector3.LerpUnclamped(start, destLocal, k);
-            yield return null;
-        }
-
-        if (buttonSnapExactlyAtEnd) buttonToTranslate.localPosition = destLocal;
-        _buttonRoutine = null;
-    }
-
-    // ----------- Axis-limit helper -----------
     // ----------- Axis-limit helper -----------
     private Vector3 ClampDestAlongAxis(Vector3 current, Vector3 desired)
     {
@@ -228,6 +225,35 @@ public class ButtonMovesObject : MonoBehaviour
 
         // Reconstruye destino = origen + (ortogonal conservado) + (eje clamped)
         return _originPoint + ortho + _axisWorld * clampedAlong;
+    }
+// --- BUTTON movement ---
+private void StartMoveButton(Vector3 destLocal)
+{
+    if (buttonToTranslate == null) return;
+    if (!allowInterrupt && _buttonRoutine != null) return;
+    if (_buttonRoutine != null) StopCoroutine(_buttonRoutine);
+    _buttonRoutine = StartCoroutine(MoveButtonTo(destLocal));
+}
+
+    private IEnumerator MoveButtonTo(Vector3 destLocal)
+    {
+        Vector3 start = buttonToTranslate.localPosition;
+        float totalDist = Vector3.Distance(start, destLocal);
+        if (totalDist < 1e-5f) { _buttonRoutine = null; yield break; }
+
+        float duration = Mathf.Max(0.0001f, totalDist / buttonSpeed);
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+            float k = buttonEase.Evaluate(Mathf.Clamp01(t));
+            buttonToTranslate.localPosition = Vector3.LerpUnclamped(start, destLocal, k);
+            yield return null;
+        }
+
+        if (buttonSnapExactlyAtEnd) buttonToTranslate.localPosition = destLocal;
+        _buttonRoutine = null;
     }
 
     // ----------- Utils -----------
