@@ -1,26 +1,27 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ButtonMovesObject : MonoBehaviour
 {
     public enum MovementSpace { World, Local }
-    public enum PressMode { Toggle, Hold } // kept for inspector compatibility
+    public enum PressMode { Toggle, Hold } // Toggle: paso discreto; Hold: continuo
 
     [Header("Target to move")]
     public Transform target;
 
     [Header("Behavior")]
-    public PressMode pressMode = PressMode.Hold;          // Toggle == Hold (identical behavior)
+    public PressMode pressMode = PressMode.Hold;
     public MovementSpace space = MovementSpace.World;
 
-    [Tooltip("Direction of movement (normalized internally).")]
+    [Tooltip("Direction of movement for THIS button (se usa solo para el signo en el eje canónico).")]
     public Vector3 direction = Vector3.right;
 
-    [Tooltip("Distance along the chosen direction.")]
+    [Tooltip("Step length along the axis per press (Toggle). Can be negative.")]
     public float distance = 0.25f;
 
     [Header("Animation (TARGET)")]
-    [Min(0.001f)] public float speed = 0.5f;
+    [Min(0.001f)] public float speed = 0.5f; // Toggle: velocidad de animación; Hold: m/s
     public AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Animation (BUTTON SELF-PUSH)")]
@@ -42,44 +43,64 @@ public class ButtonMovesObject : MonoBehaviour
     public bool allowInterrupt = false;
 
     [Header("Input Debounce")]
-    [Tooltip("Minimum time the press must be held before we accept a release (filters tiny unhovers).")]
     [Min(0f)] public float minHoldBeforeRelease = 0.10f;
-
-    [Tooltip("Cooldown between accepted inputs (press or release).")]
     [Min(0f)] public float inputCooldown = 0.12f;
 
     [Header("Axis Limit")]
-    [Tooltip("Enable to clamp movement along the motion axis within [minAlong, maxAlong] meters from the origin point.")]
+    [Tooltip("Clamp movement within [minAlong, maxAlong] meters from the shared origin.")]
     public bool useAxisLimit = true;
+    public float minAlong = -1f; // IMPORTANTE: permite negativo si quieres bajar respecto al origen
+    public float maxAlong =  1f;
 
-    [Tooltip("Minimum allowed position along the axis (meters from origin).")]
-    public float minAlong = 0f;
-
-    [Tooltip("Maximum allowed position along the axis (meters from origin).")]
-    public float maxAlong = 1f;
-
-    [Tooltip("Origin reference for the axis distance. If null, uses the target's initial position.")]
+    [Tooltip("Shared origin for along-axis distance. If null, uses the target's initial position (shared).")]
     public Transform limitOrigin;
 
     // PASSENGERS ----------
     [Header("Passengers (optional)")]
-    public PassengerZone passengerZone;               // assign the trigger inside your box
-    public bool movePassengersOnSnap = true;          // also apply delta on final snap
+    public PassengerZone passengerZone;
+    public bool movePassengersOnSnap = true;
 
-    // --- internal state ---
-    private Coroutine _moveRoutine;       // target animation
+    // --- static shared state por TARGET ---
+    private class SharedAxisState
+    {
+        public Vector3 origin;
+        public bool originSet;
+        public Vector3 axisCanonical; // eje canónico (mundo, unitario, con signo fijo)
+        public bool axisSet;
+    }
+
+    private static readonly Dictionary<Transform, SharedAxisState> s_shared = new();
+
+    // --- per-instance ---
+    private Coroutine _moveRoutine;       // animación discreta (Toggle)
+    private Coroutine _holdRoutine;       // movimiento continuo (Hold)
     private Vector3 _btnRestLocalPos;
     private Vector3 _btnPressedLocalPos;
     private Coroutine _buttonRoutine;
 
-    private Vector3 _offset;              // world-space movement offset per press
-    private bool _isPressed;              // true while we consider the button held
-    private float _pressStamp;            // Time.time when we accepted the press
-    private float _lastInputTime;         // Time.time of the last accepted press/release
+    private bool _isPressed;
+    private float _pressStamp;
+    private float _lastInputTime;
 
-    // axis-limit helpers
-    private Vector3 _axisWorld;           // normalized world-space motion axis
-    private Vector3 _originPoint;         // world-space origin for along-axis measurement
+    // Cache por instancia
+    private float _dirSignRelativeToCanonical = 1f; // +1 / -1 según este botón respecto al eje canónico
+
+    // Helpers de acceso compartido
+    private SharedAxisState Shared
+    {
+        get
+        {
+            if (!s_shared.TryGetValue(target, out var st))
+            {
+                st = new SharedAxisState();
+                s_shared[target] = st;
+            }
+            return st;
+        }
+    }
+
+    private Vector3 CanonicalAxis => Shared.axisCanonical;
+    private Vector3 SharedOrigin => Shared.origin;
 
     void Awake()
     {
@@ -90,15 +111,40 @@ public class ButtonMovesObject : MonoBehaviour
             return;
         }
 
-        // Build motion axis and offset in world space
-        Vector3 dir = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
-        _axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(dir).normalized : dir;
-        _offset = _axisWorld * distance; // one step along the axis
+        // 1) ORIGEN COMPARTIDO
+        if (!Shared.originSet)
+        {
+            Shared.origin = (limitOrigin != null) ? limitOrigin.position : target.position;
+            Shared.originSet = true;
+        }
+        else if (limitOrigin != null)
+        {
+            // Si algún botón define explícitamente un origin, imponlo como compartido
+            Shared.origin = limitOrigin.position;
+        }
 
-        // Origin for axis-limits: explicit or initial target position
-        _originPoint = (limitOrigin != null) ? limitOrigin.position : target.position;
+        // 2) EJE CANÓNICO COMPARTIDO
+        if (!Shared.axisSet)
+        {
+            Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
+            Vector3 axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(d) : d;
+            if (axisWorld.sqrMagnitude < 1e-6f) axisWorld = Vector3.right;
+            Shared.axisCanonical = axisWorld.normalized; // primer botón fija el signo
+            Shared.axisSet = true;
+        }
 
-        // Button endpoints
+        // 3) Signo relativo de ESTE botón respecto al eje canónico
+        {
+            Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
+            Vector3 axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(d) : d;
+            axisWorld = axisWorld.sqrMagnitude < 1e-6f ? Vector3.right : axisWorld.normalized;
+
+            // +1 si “apunta” aproximadamente en el mismo sentido que el canónico; -1 si es opuesto
+            _dirSignRelativeToCanonical = Mathf.Sign(Vector3.Dot(axisWorld, CanonicalAxis));
+            if (_dirSignRelativeToCanonical == 0f) _dirSignRelativeToCanonical = 1f; // caso degenerado
+        }
+
+        // Button endpoints (visual)
         if (animateButtonSelf && buttonToTranslate != null)
         {
             _btnRestLocalPos = buttonToTranslate.localPosition;
@@ -106,7 +152,6 @@ public class ButtonMovesObject : MonoBehaviour
             _btnPressedLocalPos = _btnRestLocalPos + axisDir * buttonTravel;
         }
 
-        // PASSENGERS: optional auto-wire owner for safety
         if (passengerZone != null && passengerZone.owner == null)
             passengerZone.owner = target;
     }
@@ -114,7 +159,6 @@ public class ButtonMovesObject : MonoBehaviour
     // ----------- Events -----------
     public void OnPress()
     {
-        // Cooldown & already pressed guards
         if (_isPressed) return;
         if (Time.time - _lastInputTime < inputCooldown) return;
 
@@ -122,25 +166,16 @@ public class ButtonMovesObject : MonoBehaviour
         _pressStamp = Time.time;
         _lastInputTime = Time.time;
 
-        // Intended destination
-        Vector3 dest = target.position + _offset;
+        if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
 
-        // Clamp along the axis if enabled
-        if (useAxisLimit)
+        if (pressMode == PressMode.Hold)
         {
-            dest = ClampDestAlongAxis(target.position, dest);
-            // If clamping results in effectively no movement, skip target move
-            if ((dest - target.position).sqrMagnitude < 1e-9f)
-            {
-                if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
-                return;
-            }
+            StartHold();
+            return;
         }
 
-        StartMoveTarget(dest);
-
-        // Button visual push-in
-        if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
+        // --- TOGGLE: paso RELATIVO respecto a la posición actual ---
+        StepOnceRelative(distance * _dirSignRelativeToCanonical);
     }
 
     public void OnRelease()
@@ -152,11 +187,36 @@ public class ButtonMovesObject : MonoBehaviour
         _isPressed = false;
         _lastInputTime = Time.time;
 
-        // NO target movement on release — only return the button visually
+        if (pressMode == PressMode.Hold)
+        {
+            if (_holdRoutine != null) { StopCoroutine(_holdRoutine); _holdRoutine = null; }
+            if (_moveRoutine != null) { StopCoroutine(_moveRoutine); _moveRoutine = null; }
+        }
+
         if (animateButtonSelf) StartMoveButton(_btnRestLocalPos);
     }
 
-    // ----------- Target movement -----------
+    // ----------- TOGGLE: paso relativo -----------
+    private void StepOnceRelative(float stepSigned)
+    {
+        Vector3 current = target.position;
+
+        float curAlong = Vector3.Dot(current - SharedOrigin, CanonicalAxis);
+        Vector3 ortho = (current - SharedOrigin) - CanonicalAxis * curAlong;
+
+        float newAlong = curAlong + stepSigned;
+
+        if (useAxisLimit)
+            newAlong = Mathf.Clamp(newAlong, minAlong, maxAlong);
+
+        if (Mathf.Approximately(newAlong, curAlong))
+            return;
+
+        Vector3 dest = SharedOrigin + ortho + CanonicalAxis * newAlong;
+        StartMoveTarget(dest);
+    }
+
+    // ----------- Target movement (animación discreta) -----------
     private void StartMoveTarget(Vector3 dest)
     {
         if (!allowInterrupt && _moveRoutine != null) return;
@@ -178,11 +238,9 @@ public class ButtonMovesObject : MonoBehaviour
             t += Time.deltaTime / duration;
             float k = ease.Evaluate(Mathf.Clamp01(t));
 
-            // Compute next position (already clamped by dest)
             Vector3 current = target.position;
             Vector3 next = Vector3.LerpUnclamped(start, dest, k);
 
-            // PASSENGERS: move riders by the same delta
             Vector3 delta = next - current;
             if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
@@ -205,35 +263,57 @@ public class ButtonMovesObject : MonoBehaviour
         _moveRoutine = null;
     }
 
-    // ----------- Axis-limit helper -----------
-    private Vector3 ClampDestAlongAxis(Vector3 current, Vector3 desired)
+    // ----------- HOLD: movimiento continuo con eje canónico compartido -----------
+    private void StartHold()
     {
-        // Vector desde el origen a la posición actual
-        Vector3 rCur = current - _originPoint;
+        if (!allowInterrupt && (_moveRoutine != null || _holdRoutine != null)) return;
 
-        // Descomposición actual en (ortogonal + a lo largo del eje)
-        float curAlong = Vector3.Dot(rCur, _axisWorld);
-        Vector3 ortho = rCur - _axisWorld * curAlong;
-
-        // Escalar deseado a lo largo del eje y clamp al rango
-        float desAlong = Vector3.Dot(desired - _originPoint, _axisWorld);
-        float clampedAlong = Mathf.Clamp(desAlong, minAlong, maxAlong);
-
-        // Si no hay cambio efectivo a lo largo del eje, no muevas
-        if (Mathf.Approximately(clampedAlong, curAlong))
-            return current;
-
-        // Reconstruye destino = origen + (ortogonal conservado) + (eje clamped)
-        return _originPoint + ortho + _axisWorld * clampedAlong;
+        if (_moveRoutine != null) { StopCoroutine(_moveRoutine); _moveRoutine = null; }
+        if (_holdRoutine != null) StopCoroutine(_holdRoutine);
+        _holdRoutine = StartCoroutine(MoveTargetWhileHeld());
     }
-// --- BUTTON movement ---
-private void StartMoveButton(Vector3 destLocal)
-{
-    if (buttonToTranslate == null) return;
-    if (!allowInterrupt && _buttonRoutine != null) return;
-    if (_buttonRoutine != null) StopCoroutine(_buttonRoutine);
-    _buttonRoutine = StartCoroutine(MoveButtonTo(destLocal));
-}
+
+    private IEnumerator MoveTargetWhileHeld()
+    {
+        // Avanza a lo largo del eje canónico; este botón aporta el signo
+        float signedSpeed = speed * _dirSignRelativeToCanonical;
+
+        while (_isPressed)
+        {
+            Vector3 current = target.position;
+
+            float curAlong = Vector3.Dot(current - SharedOrigin, CanonicalAxis);
+            Vector3 ortho = (current - SharedOrigin) - CanonicalAxis * curAlong;
+
+            float desiredAlong = curAlong + signedSpeed * Time.deltaTime;
+
+            if (useAxisLimit)
+                desiredAlong = Mathf.Clamp(desiredAlong, minAlong, maxAlong);
+
+            if (Mathf.Approximately(desiredAlong, curAlong))
+                break;
+
+            Vector3 desired = SharedOrigin + ortho + CanonicalAxis * desiredAlong;
+
+            Vector3 delta = desired - current;
+            if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
+                passengerZone.ApplyDelta(delta);
+
+            target.position = desired;
+            yield return null;
+        }
+
+        _holdRoutine = null;
+    }
+
+    // --- BUTTON movement (visual) ---
+    private void StartMoveButton(Vector3 destLocal)
+    {
+        if (buttonToTranslate == null) return;
+        if (!allowInterrupt && _buttonRoutine != null) return;
+        if (_buttonRoutine != null) StopCoroutine(_buttonRoutine);
+        _buttonRoutine = StartCoroutine(MoveButtonTo(destLocal));
+    }
 
     private IEnumerator MoveButtonTo(Vector3 destLocal)
     {
