@@ -59,7 +59,6 @@
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToControlXRInput.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\DynamicSceneManager.cs" />
     <Compile Include="Assets\PlaneSurface.cs" />
-    <Compile Include="Assets\Scripts\OVRGrabbable.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\Entitlement Check\EntitlementCheck.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToVisibilityXRInputHand.cs" />
     <Compile Include="Assets\InteractableDebugVisual.cs" />
@@ -112,6 +111,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToAxisXRInputHand.cs" />
+    <Compile Include="Assets\Scripts\PinchToggleInventory.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Intercept Feature\InterceptMessageHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
@@ -123,13 +123,13 @@
     <Compile Include="Assets\Scripts\LockDoor.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToSliderXRInput.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\SceneModelLoader.cs" />
+    <Compile Include="Assets\Scripts\ItemGrabEvents.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\Scripts\Slot.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToHapticsXRInput.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
-    <Compile Include="Assets\Scripts\InventoryGrabbable.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Tracking Origin Sample\TrackingOriginSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
