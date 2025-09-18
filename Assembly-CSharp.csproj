@@ -112,7 +112,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToAxisXRInputHand.cs" />
-    <Compile Include="Assets\Scripts\PinchToggleInventory.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Intercept Feature\InterceptMessageHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />

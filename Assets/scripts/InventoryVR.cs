@@ -1,151 +1,92 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * All rights reserved.
+ *
+ * Licensed under the Oculus SDK License Agreement (the "License");
+ * you may not use the Oculus SDK except in compliance with the License,
+ * which is provided at the time of installation or download, or which
+ * otherwise accompanies this software in either electronic or hard copy form.
+ *
+ * You may obtain a copy of the License at
+ *
+ * https://developer.oculus.com/licenses/oculussdk/
+ *
+ * Unless required by applicable law or agreed to in writing, the Oculus SDK
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using UnityEngine;
 
-public class InventoryGestureController : MonoBehaviour
+namespace Oculus.Interaction.Samples
 {
-    public enum PlacementMode { FollowAnchor, SpawnNearHMD }
-
-    [Header("Target")]
-    [Tooltip("Root of your inventory Canvas/Panel")]
-    public GameObject Inventory;
-
-    [Header("Mode")]
-    public PlacementMode mode = PlacementMode.SpawnNearHMD;
-
-    [Header("Follow Anchor (mode = FollowAnchor)")]
-    [Tooltip("Wrist/hand anchor (or any transform to follow)")]
-    public Transform Anchor;
-    public Vector3 anchorLocalEulerOffset = new Vector3(15f, 0f, 0f);
-    [Tooltip("Small world-space offset from the anchor, transformed by Anchor")]
-    public Vector3 anchorWorldOffset = Vector3.zero;
-
-    [Header("Spawn Near HMD (mode = SpawnNearHMD)")]
-    [Tooltip("Empty under CenterEyeAnchor (or any transform near the HMD)")]
-    public Transform spawnPoint;
-    [Tooltip("Extra local offset applied to the spawnPoint")]
-    public Vector3 spawnExtraLocalOffset = Vector3.zero;
-
-    [Header("Facing / Billboard")]
-    [Tooltip("Force the inventory to face the camera (yaw only)")]
-    public bool faceCamera = true;
-
-    [Header("Smoothing")]
-    [Tooltip("If true, smooth-follow while visible")]
-    public bool smoothFollowWhileVisible = true;
-    [Range(0f, 20f)] public float followLerp = 12f;
-
-    [Header("HMD")]
-    [Tooltip("Drag CenterEyeAnchor (or any XR camera) here. Falls back to Camera.main.")]
-    public Transform hmdTransform;
-
-    [Header("Auto Pose")]
-    [Tooltip("When the Inventory becomes active, immediately place it once")]
-    public bool poseOnceOnShow = true;
-
-    // internal
-    private bool _wasActive;
-
-    private void Awake()
+    /// <summary>
+    /// The ISDK Scene Manager handles the enabling and disabling
+    /// of the ISDK Menu panel.
+    /// </summary>
+    public class ISDKSceneMenuManager : MonoBehaviour
     {
-        if (hmdTransform == null && Camera.main != null)
-            hmdTransform = Camera.main.transform;
+        /// <summary>
+        /// The Parent Object of the Menu
+        /// </summary>
+        [Tooltip("The parent object of the menu")]
+        [Header("Place the grabbable parent object here")]
+        [SerializeField]
+        private GameObject _menuParent;
 
-        if (Inventory != null)
-            _wasActive = Inventory.activeSelf;
-    }
+        /// <summary>
+        /// The location the menu should be spawning at
+        /// </summary>
+        [Tooltip("The location the menu should be spawning at")]
+        [Header("The location the menu should be spawning at")]
+        [SerializeField]
+        private GameObject _spawnPoint;
 
-    private void Update()
-    {
-        if (Inventory == null) return;
-
-        bool isActive = Inventory.activeSelf;
-
-        // Detect rising edge of visibility to place once
-        if (poseOnceOnShow && isActive && !_wasActive)
+        protected bool _started = false;
+        protected virtual void Start()
         {
-            PoseInventory(smooth: false);
+            this.BeginStart(ref _started);
+            this.AssertField(_menuParent, nameof(_menuParent));
+            this.AssertField(this._spawnPoint, nameof(_spawnPoint));
+            this.EndStart(ref _started);
         }
 
-        // While visible, optionally smooth-follow
-        if (isActive && smoothFollowWhileVisible)
+        /// <summary>
+        /// Show/hide the menu.
+        /// </summary>
+        public void ToggleMenu()
         {
-            PoseInventory(smooth: true);
-        }
-
-        _wasActive = isActive;
-    }
-
-    private void PoseInventory(bool smooth)
-    {
-        if (Inventory == null) return;
-
-        Vector3 desiredPos;
-        Quaternion desiredRot;
-
-        if (mode == PlacementMode.FollowAnchor)
-        {
-            if (Anchor == null) return;
-
-            desiredPos = Anchor.position + Anchor.TransformVector(anchorWorldOffset);
-            desiredRot = Anchor.rotation * Quaternion.Euler(anchorLocalEulerOffset);
-
-            if (faceCamera && hmdTransform != null)
+            if (_menuParent.activeSelf)
             {
-                Vector3 toCam = hmdTransform.position - desiredPos;
-                toCam.y = 0f;
-                if (toCam.sqrMagnitude > 0.0001f)
-                    desiredRot = Quaternion.LookRotation(toCam.normalized, Vector3.up);
+                _menuParent.SetActive(false);
             }
-        }
-        else // SpawnNearHMD
-        {
-            if (spawnPoint == null) return;
-
-            desiredPos = spawnPoint.TransformPoint(spawnExtraLocalOffset);
-            desiredRot = spawnPoint.rotation;
-
-            if (faceCamera && hmdTransform != null)
+            else
             {
-                Vector3 toCam = hmdTransform.position - desiredPos;
-                toCam.y = 0f;
-                if (toCam.sqrMagnitude > 0.0001f)
-                    desiredRot = Quaternion.LookRotation(toCam.normalized, Vector3.up);
+                _menuParent.transform.position = _spawnPoint.transform.position;
+                _menuParent.transform.rotation = _spawnPoint.transform.rotation;
+                _menuParent.SetActive(true);
             }
         }
 
-        ApplyPose(desiredPos, desiredRot, smooth);
-    }
-
-    private void ApplyPose(Vector3 pos, Quaternion rot, bool smooth)
-    {
-        Transform t = Inventory.transform;
-
-        if (smooth)
+        #region Injects
+        public void InjectAllMenuItems(GameObject parent, GameObject spawnpoint)
         {
-            t.position = Vector3.Lerp(t.position, pos, Time.deltaTime * followLerp);
-            t.rotation = Quaternion.Slerp(t.rotation, rot, Time.deltaTime * followLerp);
+            InjectMenuParent(parent);
+            InjectSpawnPoint(spawnpoint);
         }
-        else
+
+        public void InjectMenuParent(GameObject parent)
         {
-            t.position = pos;
-            t.rotation = rot;
+            _menuParent = parent;
         }
-    }
 
-    // Optional helpers you can call from other scripts/UnityEvents.
-    // These DO NOT toggle by gesture; they only place/follow.
-    public void ReposeNow()
-    {
-        if (Inventory != null && Inventory.activeSelf)
-            PoseInventory(smooth: false);
-    }
 
-    public void StartFollowing()
-    {
-        smoothFollowWhileVisible = true;
-    }
-
-    public void StopFollowing()
-    {
-        smoothFollowWhileVisible = false;
+        public void InjectSpawnPoint(GameObject spawnpoint)
+        {
+            _menuParent = spawnpoint;
+        }
+        #endregion
     }
 }
