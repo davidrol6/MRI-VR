@@ -1,60 +1,35 @@
 using UnityEngine;
 
-public class PinchToggleInventory : MonoBehaviour
+public class SimplePinchToggle : MonoBehaviour
 {
-    [Header("Refs")]
-    [Tooltip("OVRHand component from LeftHand (hand-tracking rig)")]
-    public OVRHand leftHand;
-    [Tooltip("Optional: HandGrabInteractor from left hand; prevents toggle while grabbing")]
-    public Oculus.Interaction.HandGrab.HandGrabInteractor leftHandGrabInteractor;
-    [Tooltip("Your InventoryVR script")]
-    public InventoryVR inventory;
+    public OVRHand leftHand;       // Drag your OVRHand here
+    public GameObject targetObject; // The object you want to toggle
 
-    [Header("Pinch thresholds (hysteresis)")]
-    [Range(0f, 1f)] public float pinchOn  = 0.85f;
-    [Range(0f, 1f)] public float pinchOff = 0.60f;
-
-    [Header("Safety checks")]
-    public bool requireHighConfidence = true;
-    public bool requireHandTracked = true;
-    public bool blockWhileGrabbing = true;
-    public float minCooldownSeconds = 0.25f;
-
-    private bool _pinching;
-    private float _lastToggleTime;
+    private bool isActive = false;
+    private bool pinchLastFrame = false;
 
     void Update()
     {
-        if (leftHand == null || inventory == null) return;
+        if (leftHand == null || targetObject == null) return;
 
-        // Hand state guards
-        if (requireHandTracked && !leftHand.IsTracked) return;
-        if (requireHighConfidence && leftHand.HandConfidence != OVRHand.TrackingConfidence.High) return;
+        // Get pinch state (true when index finger is pinching)
+        bool isPinching = leftHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
 
-        if (blockWhileGrabbing && leftHandGrabInteractor != null)
+        // Detect the *moment* the pinch starts (rising edge)
+        if (isPinching && !pinchLastFrame)
         {
-            if (leftHandGrabInteractor.HasSelectedInteractable) return; // don’t toggle while holding an item
-        }
+            isActive = !isActive;                   // flip state
+            targetObject.SetActive(isActive);       // toggle object
 
-        // Read pinch strength (0..1) for index finger
-        float s = leftHand.GetFingerPinchStrength(OVRHand.HandFinger.Index);
-
-        // Rising edge: pinch begins
-        if (!_pinching && s >= pinchOn)
-        {
-            if (Time.time - _lastToggleTime >= minCooldownSeconds)
+            if (isActive)
             {
-                inventory.Toggle();
-                _lastToggleTime = Time.time;
+                var poser = targetObject.GetComponent<InventoryGestureController>();
+                if (poser != null)
+                    poser.ReposeNow();
             }
-            _pinching = true;
-            return;
+
         }
 
-        // Falling edge: pinch ends
-        if (_pinching && s <= pinchOff)
-        {
-            _pinching = false;
-        }
+        pinchLastFrame = isPinching;
     }
 }

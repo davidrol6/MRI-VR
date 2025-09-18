@@ -10,12 +10,6 @@ public class Slot : MonoBehaviour
     public Image slotImage;
     private Color originalColor;
 
-    [Header("Snapping")]
-    [Tooltip("How close (in meters) the item must be to the slot's center to snap in.")]
-    public float snapRadius = 0.15f;
-    [Tooltip("If true, item rotation will be forced to Item.slotRotation when inserted.")]
-    public bool applySlotRotation = true;
-
     private void Start()
     {
         if (slotImage == null)
@@ -35,48 +29,35 @@ public class Slot : MonoBehaviour
         // Only allow insert if the item is *not* currently grabbed
         if (grabRelay != null && !grabRelay.IsGrabbed)
         {
-            // Optional proximity guard so you don't snap from across the slot
-            float dist = Vector3.Distance(obj.transform.position, transform.position);
-            if (dist <= snapRadius)
-            {
-                InsertItem(obj);
-            }
+            InsertItem(obj);
         }
     }
 
     private bool IsItem(GameObject obj)
     {
-        return obj.GetComponent<Item>() != null;
+        return obj.GetComponent<Item>();
     }
 
     private void InsertItem(GameObject obj)
     {
         var rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) rb.isKinematic = true;
+        if (rb != null) rb.isKinematic = true; //stops phisics
 
         // Parent under the slot so it rides with the inventory
-        obj.transform.SetParent(transform, true);
-        obj.transform.localPosition = Vector3.zero;
+        obj.transform.SetParent(gameObject.transform, true);
+        obj.transform.localPosition = Vector3.zero; //snaps slot to center
 
         var item = obj.GetComponent<Item>();
-        if (applySlotRotation && item != null)
-            obj.transform.localEulerAngles = item.slotRotation;
-
-        if (item != null)
-        {
-            item.inSlot = true;
-            item.currentSlot = this;
-        }
+        obj.transform.localEulerAngles = item.slotRotation;
+        item.inSlot = true;
+        item.currentSlot = this;
 
         ItemInSlot = obj;
-
-        if (slotImage != null)
-            slotImage.color = Color.gray;
+        slotImage.color = Color.gray;
     }
 
     public void ResetColor()
     {
-        if (slotImage != null)
-            slotImage.color = originalColor;
+        slotImage.color = originalColor;
     }
 }

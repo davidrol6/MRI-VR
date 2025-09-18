@@ -18,7 +18,7 @@ public class ItemGrabEvents : MonoBehaviour
         IsGrabbed = true;
 
         // If the item is sitting in a slot, free that slot now
-        if (item != null && item.inSlot)
+        if (item.inSlot)
         {
             var parentSlot = item.currentSlot;
             if (parentSlot != null)
@@ -27,7 +27,7 @@ public class ItemGrabEvents : MonoBehaviour
                 item.inSlot = false;
 
                 // Break parent so the item is truly detached
-                transform.SetParent(null, true);
+                transform.parent = null;
 
                 // Restore slot UI color
                 parentSlot.ResetColor();

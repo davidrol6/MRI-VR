@@ -14,6 +14,10 @@ public class SpawnNearHMDOnGesture : MonoBehaviour
     public Transform hmdTransform;          // Drag CenterEyeAnchor (or any XR camera) here
     public HandRef leftHand;                // Or right hand if preferred
 
+    [Tooltip("OVRHand component from the hand-tracking rig (alternative to HandRef)")]
+    public OVRHand ovrLeftHand;
+
+
     [Header("Placement")]
     public Vector3 extraLocalOffset = Vector3.zero;
     [Range(0f, 20f)] public float followLerp = 12f;
@@ -31,7 +35,13 @@ public class SpawnNearHMDOnGesture : MonoBehaviour
 
     void Update()
     {
-        bool isPinching = leftHand != null && leftHand.GetIndexFingerIsPinching();
+        bool isPinching = false;
+        if (leftHand != null)
+            isPinching = leftHand.GetIndexFingerIsPinching();
+        else if (ovrLeftHand != null && 
+                ovrLeftHand.HandConfidence == OVRHand.TrackingConfidence.High)
+            isPinching = ovrLeftHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
+
         if (isPinching && !_pinchLastFrame)
         {
             Toggle();
