@@ -22,7 +22,7 @@ public class Slot : MonoBehaviour
     {
         if (ItemInSlot != null) return;
 
-        GameObject obj = other.attachedRigidbody ? other.attachedRigidbody.gameObject : other.gameObject;
+        GameObject obj = other.gameObject;
         if (!IsItem(obj)) return;
 
         var grabRelay = obj.GetComponent<ItemGrabEvents>();
@@ -40,15 +40,13 @@ public class Slot : MonoBehaviour
 
     private void InsertItem(GameObject obj)
     {
-        var rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) rb.isKinematic = true; //stops phisics
-
+        obj.GetComponent<Rigidbody>().isKinematic = true; //stops phisics
         // Parent under the slot so it rides with the inventory
         obj.transform.SetParent(gameObject.transform, true);
         obj.transform.localPosition = Vector3.zero; //snaps slot to center
+        obj.transform.localEulerAngles = obj.GetComponent<Item>().slotRotation;
 
         var item = obj.GetComponent<Item>();
-        obj.transform.localEulerAngles = item.slotRotation;
         item.inSlot = true;
         item.currentSlot = this;
 
