@@ -64,6 +64,7 @@
     <Compile Include="Assets\InteractableDebugVisual.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Scripts\KnobReset.cs" />
+    <Compile Include="Assets\Scripts\pinchdetector.cs" />
     <Compile Include="Assets\Scripts\PrintKnob.cs" />
     <Compile Include="Assets\Scripts\ButtonVisuals.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\BasicSceneManager.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\PoseProvider.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Meshing Subsystem Feature\MeshingBehaviour.cs" />
     <Compile Include="Assets\Scripts\Item.cs" />
+    <Compile Include="Assets\Scripts\HandGestureActiveState.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\PoseProvider_NameDevice.cs" />
     <Compile Include="Assets\Scripts\PassengerZone.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\AutomaticTrackingModeChangerXRInput.cs" />
