@@ -90,7 +90,9 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\SquareSurface.cs" />
+    <Compile Include="Assets\Scripts\SetVolume.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
+    <Compile Include="Assets\Scripts\SetBrightness.cs" />
     <Compile Include="Assets\Radial Menu Framework\Scripts\RMF_RadialMenuElement.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\PoseProvider.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Meshing Subsystem Feature\MeshingBehaviour.cs" />
