@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\PrintKnob.cs" />
     <Compile Include="Assets\Scripts\ButtonVisuals.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\BasicSceneManager.cs" />
+    <Compile Include="Assets\Scripts\CanvasMover.cs" />
     <Compile Include="Assets\Scripts\pruebainventario.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToButtonXRInputHand.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToAxisXRInput.cs" />
