@@ -11,6 +11,11 @@ public class UIObjectiveList : MonoBehaviour
 
     private List<GameObject> spawnedItems = new List<GameObject>();
 
+    void Start()
+    {
+        UpdateUI();
+    }
+
     void OnEnable()
     {
         UpdateUI();

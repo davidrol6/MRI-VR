@@ -7,7 +7,13 @@ public class RoleProvider : MonoBehaviour
     [Header("Current Role (auto-set by UI)")]
     public Role role = Role.Patient;
 
-    // Call this from a Toggle or Button
+    private void Awake()
+    {
+        if (role == Role.Patient)
+            SetRolePatient(true);
+        else
+            SetRoleTechnician(true);
+    }
     public void SetRolePatient(bool isOn)
     {
         if (isOn)

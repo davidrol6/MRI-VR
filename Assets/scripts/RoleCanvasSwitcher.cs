@@ -3,7 +3,7 @@ using UnityEngine;
 public class RoleCanvasSwitcher : MonoBehaviour
 {
     [Header("Role Source")]
-    [SerializeField] private RoleProvider roleProvider; // assign in Inspector if possible
+    [SerializeField] private RoleProvider roleProvider; 
 
     [Header("Scene Canvases")]
     [SerializeField] private GameObject patientCanvas;
@@ -11,14 +11,11 @@ public class RoleCanvasSwitcher : MonoBehaviour
 
     private void Awake()
     {
-        // Resolve once to avoid doing it every toggle press.
         if (roleProvider == null)
         {
-            // Unity 2023+ API (preferred)
 #if UNITY_2023_1_OR_NEWER
             roleProvider = FindFirstObjectByType<RoleProvider>(FindObjectsInactive.Include);
 #else
-            // Fallback for older Unity
             roleProvider = FindObjectOfType<RoleProvider>(true);
 #endif
         }
@@ -41,15 +38,15 @@ public class RoleCanvasSwitcher : MonoBehaviour
 
         ShowForCurrentRole();
     }
-
-    // Button-friendly helpers (optional)
     public void ShowForCurrentRole()
     {
+        Debug.Log("[RoleCanvasSwitcher] Current role: " + roleProvider.role);
         bool isPatient = roleProvider.role == Role.Patient;
 
         if (patientCanvas)   patientCanvas.SetActive(isPatient);
         if (technicianCanvas) technicianCanvas.SetActive(!isPatient);
     }
+
 
     public void HideAll()
     {
