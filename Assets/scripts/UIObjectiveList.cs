@@ -6,41 +6,49 @@ using System.Collections.Generic;
 public class UIObjectiveList : MonoBehaviour
 {
     public ObjectiveManager objectiveManager;
-    public Transform contentParent; // Contenedor (ej. dentro de un ScrollView)
-    public GameObject objectivePrefab; // Prefab con texto + tick
+    public Transform contentParent;
+    public GameObject objectiveTemplate; 
 
-    private List<GameObject> spawnedItems = new List<GameObject>();
+    private Dictionary<string, GameObject> objectiveUIMap = new Dictionary<string, GameObject>();
 
     void Start()
     {
-        UpdateUI();
+        InitializeUI();
     }
 
-    void OnEnable()
+    public void InitializeUI()
     {
-        UpdateUI();
-    }
-
-    public void UpdateUI()
-    {
-        // Borra lo viejo
-        foreach (GameObject go in spawnedItems) Destroy(go);
-        spawnedItems.Clear();
-
-        // Crea solo los del rol actual
+        // Crea los elementos una sola vez
         foreach (Objective obj in objectiveManager.objectives)
         {
             if (obj.role == objectiveManager.roleProvider.role)
             {
-                GameObject go = Instantiate(objectivePrefab, contentParent);
-                TMP_Text text = go.GetComponentInChildren<TMP_Text>();
+                GameObject go = Instantiate(objectiveTemplate, contentParent);
+                go.SetActive(true);
+
+                TMP_Text text = go.transform.Find("DescriptionText").GetComponent<TMP_Text>();
                 Image tick = go.transform.Find("TickIcon").GetComponent<Image>();
 
                 text.text = obj.description;
                 tick.enabled = obj.isCompleted;
 
-                spawnedItems.Add(go);
+                // Guarda referencia para actualizar rápido
+                objectiveUIMap[obj.description] = go;
             }
+        }
+    }
+
+    // Se llama solo cuando cambia un objetivo (no en bucle)
+    public void RefreshObjective(Objective obj)
+    {
+        if (objectiveUIMap.TryGetValue(obj.description, out GameObject go))
+        {
+            Image tick = go.transform.Find("TickIcon").GetComponent<Image>();
+            tick.enabled = obj.isCompleted;
+
+            // Color verde si está completado
+            TMP_Text text = go.transform.Find("DescriptionText").GetComponent<TMP_Text>();
+            text.color = obj.isCompleted ? Color.green : Color.white;
         }
     }
 }

@@ -42,7 +42,6 @@ public class RoleCanvasSwitcher : MonoBehaviour
     {
         Debug.Log("[RoleCanvasSwitcher] Current role: " + roleProvider.role);
         bool isPatient = roleProvider.role == Role.Patient;
-
         if (patientCanvas)   patientCanvas.SetActive(isPatient);
         if (technicianCanvas) technicianCanvas.SetActive(!isPatient);
     }

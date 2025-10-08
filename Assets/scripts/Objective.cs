@@ -4,6 +4,6 @@ using UnityEngine;
 public class Objective
 {
     public string description;
-    public Role role; // Para quién es este objetivo
+    public Role role;
     public bool isCompleted;
 }

@@ -5,8 +5,11 @@ public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance;
 
-    public RoleProvider roleProvider; // Asigna tu RoleProvider en el Inspector
-    public List<Objective> objectives; // Lista rellena desde el inspector
+    [Header("Referencia al proveedor de rol")]
+    public RoleProvider roleProvider;
+
+    [Header("Lista de objetivos")]
+    public List<Objective> objectives = new List<Objective>();
 
     void Awake()
     {
@@ -15,14 +18,40 @@ public class ObjectiveManager : MonoBehaviour
 
     public void CompleteObjective(string description)
     {
-        // Busca el objetivo que coincida con la descripción y el rol actual
-        Objective obj = objectives.Find(o => o.description == description && o.role == roleProvider.role);
-        if (obj != null && !obj.isCompleted)
-        {
-            obj.isCompleted = true;
+        // Solo comprobamos una vez, no hacemos bucles repetitivos
+        Role currentRole = roleProvider.role;
+        Debug.Log($"[RoleProvider] Rol actual: {roleProvider.role}");
+        Debug.Log($"Intentando completar objetivo '{description}' para el rol {currentRole}");
 
-            // Si tienes un UI que refrescar, lo llamas aquí:
-            // uiObjectiveList.UpdateUI(); 
+        // Busca el objetivo concreto solo una vez
+        for (int i = 0; i < objectives.Count; i++)
+        {
+            Objective obj = objectives[i];
+            if (obj.description == description && obj.role == currentRole)
+            {
+                if (!obj.isCompleted)
+                {
+                    obj.isCompleted = true;
+                    Debug.Log($"✅ Objetivo completado: '{obj.description}' (rol: {obj.role})");
+                }
+                else
+                {
+                    Debug.Log($"ℹ️ Objetivo '{obj.description}' ya estaba completado.");
+                }
+                return;
+            }
+        }
+
+        Debug.LogWarning($"❌ No se encontró el objetivo '{description}' para el rol {currentRole}.");
+    }
+
+    // Método opcional para depurar el estado actual
+    public void PrintObjectivesStatus()
+    {
+        Debug.Log("---- ESTADO DE LOS OBJETIVOS ----");
+        foreach (var obj in objectives)
+        {
+            Debug.Log($"{obj.description} ({obj.role}) -> {(obj.isCompleted ? "✔️ COMPLETADO" : "❌ PENDIENTE")}");
         }
     }
 }
