@@ -6,10 +6,10 @@ public class GrabObjectiveTrigger : MonoBehaviour
     public ObjectiveManager objectiveManager;
 
     [Header("Descripción exacta del objetivo")]
-    public string objectiveDescription = "Leer consentimiento";
+    public string objectiveDescription;
 
     [Header("Tiempo necesario para cumplir el objetivo (segundos)")]
-    public float requiredHoldTime = 5f;
+    public float requiredHoldTime;
 
     private float holdTimer = 0f;
     private bool isHeld = false;

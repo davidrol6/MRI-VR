@@ -34,7 +34,7 @@ public class UIButtonObjectiveTrigger : MonoBehaviour
     {
         if (isOn)
         {
-            Debug.Log($"🟢 Botón pulsado para objetivo: {objectiveDescription}");
+            Debug.Log($"🟢 Toggle pulsado para objetivo: {objectiveDescription}");
             objectiveManager.CompleteObjective(objectiveDescription);
             objectiveManager.PrintObjectivesStatus(); // Para ver toda la lista en consola
         }
