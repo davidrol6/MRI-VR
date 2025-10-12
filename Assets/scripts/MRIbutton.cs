@@ -49,8 +49,8 @@ public class ButtonMovesObject : MonoBehaviour
     [Header("Axis Limit")]
     [Tooltip("Clamp movement within [minAlong, maxAlong] meters from the shared origin.")]
     public bool useAxisLimit = true;
-    public float minAlong = -1f; // IMPORTANTE: permite negativo si quieres bajar respecto al origen
-    public float maxAlong =  1f;
+    public float minAlong = -1f;
+    public float maxAlong = 1f;
 
     [Tooltip("Shared origin for along-axis distance. If null, uses the target's initial position (shared).")]
     public Transform limitOrigin;
@@ -60,20 +60,29 @@ public class ButtonMovesObject : MonoBehaviour
     public PassengerZone passengerZone;
     public bool movePassengersOnSnap = true;
 
+    // -------------------- OBJECTIVE SYSTEM --------------------
+    [Header("Objective System (optional)")]
+    public ObjectiveManager objectiveManager;
+    [Tooltip("Exact description of the objective to complete when pressed.")]
+    public string objectiveDescription;
+    public bool completeObjectiveOnPress = true;
+    public bool onlyOnce = false; // optional: prevents completing the same objective multiple times
+    private bool _objectiveCompleted;
+
     // --- static shared state por TARGET ---
     private class SharedAxisState
     {
         public Vector3 origin;
         public bool originSet;
-        public Vector3 axisCanonical; // eje canónico (mundo, unitario, con signo fijo)
+        public Vector3 axisCanonical;
         public bool axisSet;
     }
 
     private static readonly Dictionary<Transform, SharedAxisState> s_shared = new();
 
     // --- per-instance ---
-    private Coroutine _moveRoutine;       // animación discreta (Toggle)
-    private Coroutine _holdRoutine;       // movimiento continuo (Hold)
+    private Coroutine _moveRoutine;
+    private Coroutine _holdRoutine;
     private Vector3 _btnRestLocalPos;
     private Vector3 _btnPressedLocalPos;
     private Coroutine _buttonRoutine;
@@ -82,10 +91,8 @@ public class ButtonMovesObject : MonoBehaviour
     private float _pressStamp;
     private float _lastInputTime;
 
-    // Cache por instancia
-    private float _dirSignRelativeToCanonical = 1f; // +1 / -1 según este botón respecto al eje canónico
+    private float _dirSignRelativeToCanonical = 1f;
 
-    // Helpers de acceso compartido
     private SharedAxisState Shared
     {
         get
@@ -111,7 +118,7 @@ public class ButtonMovesObject : MonoBehaviour
             return;
         }
 
-        // 1) ORIGEN COMPARTIDO
+        // Shared origin
         if (!Shared.originSet)
         {
             Shared.origin = (limitOrigin != null) ? limitOrigin.position : target.position;
@@ -119,32 +126,29 @@ public class ButtonMovesObject : MonoBehaviour
         }
         else if (limitOrigin != null)
         {
-            // Si algún botón define explícitamente un origin, imponlo como compartido
             Shared.origin = limitOrigin.position;
         }
 
-        // 2) EJE CANÓNICO COMPARTIDO
+        // Shared axis
         if (!Shared.axisSet)
         {
             Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
             Vector3 axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(d) : d;
             if (axisWorld.sqrMagnitude < 1e-6f) axisWorld = Vector3.right;
-            Shared.axisCanonical = axisWorld.normalized; // primer botón fija el signo
+            Shared.axisCanonical = axisWorld.normalized;
             Shared.axisSet = true;
         }
 
-        // 3) Signo relativo de ESTE botón respecto al eje canónico
+        // Sign relative to canonical
         {
             Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
             Vector3 axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(d) : d;
             axisWorld = axisWorld.sqrMagnitude < 1e-6f ? Vector3.right : axisWorld.normalized;
-
-            // +1 si “apunta” aproximadamente en el mismo sentido que el canónico; -1 si es opuesto
             _dirSignRelativeToCanonical = Mathf.Sign(Vector3.Dot(axisWorld, CanonicalAxis));
-            if (_dirSignRelativeToCanonical == 0f) _dirSignRelativeToCanonical = 1f; // caso degenerado
+            if (_dirSignRelativeToCanonical == 0f) _dirSignRelativeToCanonical = 1f;
         }
 
-        // Button endpoints (visual)
+        // Button visuals
         if (animateButtonSelf && buttonToTranslate != null)
         {
             _btnRestLocalPos = buttonToTranslate.localPosition;
@@ -168,13 +172,15 @@ public class ButtonMovesObject : MonoBehaviour
 
         if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
 
+        // --- OBJECTIVE ACTION ---
+        TryCompleteObjective();
+
         if (pressMode == PressMode.Hold)
         {
             StartHold();
             return;
         }
 
-        // --- TOGGLE: paso RELATIVO respecto a la posición actual ---
         StepOnceRelative(distance * _dirSignRelativeToCanonical);
     }
 
@@ -196,14 +202,25 @@ public class ButtonMovesObject : MonoBehaviour
         if (animateButtonSelf) StartMoveButton(_btnRestLocalPos);
     }
 
-    // ----------- TOGGLE: paso relativo -----------
+    // ----------- Objective Handling -----------
+    private void TryCompleteObjective()
+    {
+        if (!completeObjectiveOnPress || objectiveManager == null) return;
+        if (onlyOnce && _objectiveCompleted) return;
+
+        _objectiveCompleted = true;
+
+        Debug.Log($"🎯 Objective triggered from button: {objectiveDescription}");
+        objectiveManager.CompleteObjective(objectiveDescription);
+        objectiveManager.PrintObjectivesStatus();
+    }
+
+    // ----------- Movement Logic -----------
     private void StepOnceRelative(float stepSigned)
     {
         Vector3 current = target.position;
-
         float curAlong = Vector3.Dot(current - SharedOrigin, CanonicalAxis);
         Vector3 ortho = (current - SharedOrigin) - CanonicalAxis * curAlong;
-
         float newAlong = curAlong + stepSigned;
 
         if (useAxisLimit)
@@ -216,7 +233,6 @@ public class ButtonMovesObject : MonoBehaviour
         StartMoveTarget(dest);
     }
 
-    // ----------- Target movement (animación discreta) -----------
     private void StartMoveTarget(Vector3 dest)
     {
         if (!allowInterrupt && _moveRoutine != null) return;
@@ -263,11 +279,9 @@ public class ButtonMovesObject : MonoBehaviour
         _moveRoutine = null;
     }
 
-    // ----------- HOLD: movimiento continuo con eje canónico compartido -----------
     private void StartHold()
     {
         if (!allowInterrupt && (_moveRoutine != null || _holdRoutine != null)) return;
-
         if (_moveRoutine != null) { StopCoroutine(_moveRoutine); _moveRoutine = null; }
         if (_holdRoutine != null) StopCoroutine(_holdRoutine);
         _holdRoutine = StartCoroutine(MoveTargetWhileHeld());
@@ -275,13 +289,11 @@ public class ButtonMovesObject : MonoBehaviour
 
     private IEnumerator MoveTargetWhileHeld()
     {
-        // Avanza a lo largo del eje canónico; este botón aporta el signo
         float signedSpeed = speed * _dirSignRelativeToCanonical;
 
         while (_isPressed)
         {
             Vector3 current = target.position;
-
             float curAlong = Vector3.Dot(current - SharedOrigin, CanonicalAxis);
             Vector3 ortho = (current - SharedOrigin) - CanonicalAxis * curAlong;
 
