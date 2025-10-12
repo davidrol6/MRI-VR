@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum Role { Patient, Technician }
+public enum Role { Patient, Technician, Observer }
 
 public class RoleProvider : MonoBehaviour
 {
@@ -10,14 +10,20 @@ public class RoleProvider : MonoBehaviour
     [Header("Current Role")]
     public Role role = Role.Patient;
 
-    [System.Serializable] public class RoleChangedEvent : UnityEvent<Role> {}
+    [System.Serializable] 
+    public class RoleChangedEvent : UnityEvent<Role> {}
     public RoleChangedEvent OnRoleChanged;
 
     void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) 
+        { 
+            Destroy(gameObject); 
+            return; 
+        }
+
         Instance = this;
-        DontDestroyOnLoad(gameObject);                   // persiste entre escenas
+        DontDestroyOnLoad(gameObject); // Persiste entre escenas
         Debug.Log($"[RoleProvider] Init with role = {role}");
     }
 
@@ -31,9 +37,15 @@ public class RoleProvider : MonoBehaviour
         if (isOn) SetRole(Role.Technician, "UI Toggle Technician");
     }
 
+    public void SetRoleObserver(bool isOn)
+    {
+        if (isOn) SetRole(Role.Observer, "UI Toggle Observer");
+    }
+
     public void SetRole(Role newRole, string source = "Code")
     {
         if (role == newRole) return;
+
         role = newRole;
         Debug.Log($"[RoleProvider] Role change -> {role} (source: {source})\n{System.Environment.StackTrace}", this);
         OnRoleChanged?.Invoke(role);

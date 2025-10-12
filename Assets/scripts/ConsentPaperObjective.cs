@@ -1,43 +1,60 @@
 using UnityEngine;
 
-public class ConsentPaperObjective : MonoBehaviour
+public class GrabObjectiveTrigger : MonoBehaviour
 {
-    public string objectiveDescription = "Leer consentimiento";
-    public float requiredTime = 10f; // segundos necesarios
+    [Header("Referencia al ObjectiveManager")]
+    public ObjectiveManager objectiveManager;
 
-    private float timer = 0f;
+    [Header("Descripción exacta del objetivo")]
+    public string objectiveDescription = "Leer consentimiento";
+
+    [Header("Tiempo necesario para cumplir el objetivo (segundos)")]
+    public float requiredHoldTime = 5f;
+
+    private float holdTimer = 0f;
     private bool isHeld = false;
 
     void Update()
     {
+        // Si el objeto está siendo sujetado, cuenta el tiempo
         if (isHeld)
         {
-            timer += Time.deltaTime;
-            if (timer >= requiredTime)
+            holdTimer += Time.deltaTime;
+
+            // Una vez superado el tiempo necesario, completa el objetivo
+            if (holdTimer >= requiredHoldTime)
             {
-                ObjectiveManager.Instance.CompleteObjective(objectiveDescription);
-                enabled = false; // para no seguir contando
+                Debug.Log($"🟢 Objetivo cumplido tras {requiredHoldTime} segundos: {objectiveDescription}");
+                objectiveManager.CompleteObjective(objectiveDescription);
+                objectiveManager.PrintObjectivesStatus();
+
+                // Evita que vuelva a cumplirse
+                enabled = false;
             }
         }
         else
         {
-            timer = 0f; // resetea si suelta antes de tiempo
+            // Si suelta antes del tiempo, resetea el contador
+            holdTimer = 0f;
         }
     }
 
-    // Detecta si el paciente está agarrando
+    // Detecta cuando la mano entra en contacto
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Hand")) 
+        if (other.CompareTag("Hand"))
         {
+            Debug.Log($"✋ Mano detectada, comenzando a contar para: {objectiveDescription}");
             isHeld = true;
         }
     }
 
+    // Detecta cuando la mano suelta o sale del área
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Hand"))
         {
+            Debug.Log($"❌ Mano soltó el objeto: {objectiveDescription}");
             isHeld = false;
         }
     }
