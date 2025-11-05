@@ -68,6 +68,12 @@ public class ButtonMovesObject : MonoBehaviour
     public bool completeObjectiveOnPress = true;
     public bool onlyOnce = false; // optional: prevents completing the same objective multiple times
     private bool _objectiveCompleted;
+    // === VR Rig (se moverá SOLO si está dentro de la PassengerZone) ===
+    [Header("VR Rig (condicional)")]
+    public Transform rigRoot;              // p.ej. "[BuildingBlock] Camera Rig"
+    public Transform centerEyeAnchor;      // p.ej. TrackingSpace/CenterEyeAnchor
+    public CharacterController rigCC;      // opcional
+
 
     // --- static shared state por TARGET ---
     private class SharedAxisState
@@ -108,9 +114,12 @@ public class ButtonMovesObject : MonoBehaviour
 
     private Vector3 CanonicalAxis => Shared.axisCanonical;
     private Vector3 SharedOrigin => Shared.origin;
+    private Collider _zoneCollider;
 
     void Awake()
     {
+        if (passengerZone != null)
+        _zoneCollider = passengerZone.GetComponent<Collider>(); // Box/any collider (IsTrigger da igual)
         if (target == null)
         {
             Debug.LogError("[ButtonMovesObject] Please assign a target.");
@@ -261,6 +270,9 @@ public class ButtonMovesObject : MonoBehaviour
             if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
 
+            // 👇 NUEVO: mueve el rig solo si la cabeza está dentro de la zona
+            MoveRigByDeltaIfInside(delta);
+
             target.position = next;
             yield return null;
         }
@@ -272,6 +284,9 @@ public class ButtonMovesObject : MonoBehaviour
 
             if (passengerZone != null && movePassengersOnSnap && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
+
+            // 👇 NUEVO:
+            MoveRigByDeltaIfInside(delta);
 
             target.position = final;
         }
@@ -310,6 +325,9 @@ public class ButtonMovesObject : MonoBehaviour
             Vector3 delta = desired - current;
             if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
+
+            // 👇 NUEVO:
+            MoveRigByDeltaIfInside(delta);
 
             target.position = desired;
             yield return null;
@@ -362,4 +380,32 @@ public class ButtonMovesObject : MonoBehaviour
                 return v.normalized;
         }
     }
+    private bool IsHeadInsideZone()
+{
+    if (_zoneCollider == null || centerEyeAnchor == null) return false;
+
+    // ClosestPoint: si el punto está dentro, devuelve el propio punto
+    Vector3 p = centerEyeAnchor.position;
+    Vector3 cp = _zoneCollider.ClosestPoint(p);
+    return (cp - p).sqrMagnitude <= 1e-8f;
+}
+
+    private void MoveRigByDeltaIfInside(Vector3 delta)
+    {
+        if (delta.sqrMagnitude <= 1e-12f) return;
+        if (rigRoot == null) return;
+        if (!IsHeadInsideZone()) return;
+
+        bool had = false;
+        if (rigCC != null)
+        {
+            had = rigCC.enabled;
+            rigCC.enabled = false; // evita empujones del CC al mover el rig
+        }
+
+        rigRoot.position += delta;
+
+        if (rigCC != null) rigCC.enabled = had;
+    }
+
 }

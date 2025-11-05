@@ -63,6 +63,7 @@
     <Compile Include="Assets\scripts\SquareSurface.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\Entitlement Check\EntitlementCheck.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToVisibilityXRInputHand.cs" />
+    <Compile Include="Assets\scripts\UIAreaFollowsCanvas.cs" />
     <Compile Include="Assets\scripts\GrabContainerCarrier.cs" />
     <Compile Include="Assets\scripts\LightSwitch.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\AutomaticTrackingModeChangerXRInput.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\scripts\MRIbutton.cs" />
+    <Compile Include="Assets\scripts\OVRTeleportToPose.cs" />
     <Compile Include="Assets\scripts\LockDoor.cs" />
     <Compile Include="Assets\scripts\ObjectiveinButton.cs" />
     <Compile Include="Assets\scripts\Item.cs" />
