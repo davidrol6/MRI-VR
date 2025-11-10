@@ -112,6 +112,7 @@
     <Compile Include="Assets\scripts\MovePatientCameratoTable.cs" />
     <Compile Include="Assets\scripts\InteractableDebugVisual.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\Simple Platform\DataEntry.cs" />
+    <Compile Include="Assets\scripts\ExitButton.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\SceneManagerHelper.cs" />
     <Compile Include="Assets\scripts\OneGrabRotateTransformer.cs" />
     <Compile Include="Assets\scripts\RoleProvider.cs" />
