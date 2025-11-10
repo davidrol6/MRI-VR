@@ -109,6 +109,7 @@
     <Compile Include="Assets\scripts\PrintKnob.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToControlXRInputHand.cs" />
     <Compile Include="Assets\scripts\ObjectiveinToggle.cs" />
+    <Compile Include="Assets\scripts\MovePatientCameratoTable.cs" />
     <Compile Include="Assets\scripts\InteractableDebugVisual.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\Simple Platform\DataEntry.cs" />
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\SceneManagerHelper.cs" />
