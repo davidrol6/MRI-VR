@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class ObjectiveManager : MonoBehaviour
@@ -11,6 +12,9 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Lista de objetivos")]
     public List<Objective> objectives = new List<Objective>();
 
+    // EVENTO para avisar de que un objetivo se ha completado
+    public event Action<Objective> OnObjectiveCompleted;
+
     void Awake()
     {
         Instance = this;
@@ -18,12 +22,10 @@ public class ObjectiveManager : MonoBehaviour
 
     public void CompleteObjective(string description)
     {
-        // Solo comprobamos una vez, no hacemos bucles repetitivos
         Role currentRole = roleProvider.role;
         Debug.Log($"[RoleProvider] Rol actual: {roleProvider.role}");
         Debug.Log($"Intentando completar objetivo '{description}' para el rol {currentRole}");
 
-        // Busca el objetivo concreto solo una vez
         for (int i = 0; i < objectives.Count; i++)
         {
             Objective obj = objectives[i];
@@ -33,6 +35,9 @@ public class ObjectiveManager : MonoBehaviour
                 {
                     obj.isCompleted = true;
                     Debug.Log($"✅ Objetivo completado: '{obj.description}' (rol: {obj.role})");
+
+                    // Llamamos al evento
+                    OnObjectiveCompleted?.Invoke(obj);
                 }
                 else
                 {
@@ -45,7 +50,6 @@ public class ObjectiveManager : MonoBehaviour
         Debug.LogWarning($"❌ No se encontró el objetivo '{description}' para el rol {currentRole}.");
     }
 
-    // Método opcional para depurar el estado actual
     public void PrintObjectivesStatus()
     {
         Debug.Log("---- ESTADO DE LOS OBJETIVOS ----");

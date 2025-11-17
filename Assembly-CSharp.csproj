@@ -154,10 +154,12 @@
     <Compile Include="Assets\scripts\ObjectivesManager.cs" />
     <Compile Include="Assets\scripts\UIObjectiveList.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToDeviceInfoXRInput.cs" />
+    <Compile Include="Assets\scripts\ObjectiveRowUI.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\App Deep Linking\AppDeeplinkRunner.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Samples\Meta XR Platform SDK\77.0.0\Group Presence\Scripts\GroupPresenceSample.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\MarkLateLatchNodeXRInput.cs" />
+    <Compile Include="Assets\scripts\ObjectivesPanelUI.cs" />
     <Compile Include="Assets\scripts\ToggleTransformChanger.cs" />
   </ItemGroup>
   <ItemGroup>
