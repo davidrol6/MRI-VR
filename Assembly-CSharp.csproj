@@ -70,7 +70,6 @@
     <Compile Include="Assets\Samples\Meta XR Core SDK\77.0.0\Mixed Reality Sample\Scripts\CustomSceneManager\BasicSceneManager.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToButtonXRInputHand.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToAxisXRInput.cs" />
-    <Compile Include="Assets\scripts\ConsentPaperObjective.cs" />
     <Compile Include="Assets\scripts\DoorUnlockByKn.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Intercept Feature\InterceptCreateSessionFeature.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToVector2SliderXRInput.cs" />
@@ -78,6 +77,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\scripts\PlaceableObjectiveItem.cs" />
     <Compile Include="Assets\scripts\ItemGrabEvents.cs" />
     <Compile Include="Assets\scripts\pruebainventario.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\TrackingModeOriginXRInput.cs" />
@@ -90,6 +90,7 @@
     <Compile Include="Assets\Radial Menu Framework\Scripts\RMF_ForceDirection.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
+    <Compile Include="Assets\scripts\GrabbingObjectiveChecker.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\scripts\CanvasMover.cs" />
     <Compile Include="Assets\Radial Menu Framework\Scripts\RMF_RadialMenuElement.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Meshing Subsystem Feature\MeshingTeapotFeature.cs" />
     <Compile Include="Assets\scripts\KnobReset.cs" />
     <Compile Include="Assets\scripts\Objective.cs" />
+    <Compile Include="Assets\scripts\ObjectiveSnapZone.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\scripts\SpawnNearHMDOnGesture.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
