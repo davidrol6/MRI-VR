@@ -34,7 +34,7 @@ public class ObjectiveManager : MonoBehaviour
                 if (!obj.isCompleted)
                 {
                     obj.isCompleted = true;
-                    Debug.Log($"✅ Objetivo completado: '{obj.description}' (rol: {obj.role})");
+                    Debug.Log($"✅ Objetivo completado: '{obj.description}' (rol: {obj.role}, puntos: {obj.points})");
 
                     // Llamamos al evento
                     OnObjectiveCompleted?.Invoke(obj);
@@ -55,7 +55,34 @@ public class ObjectiveManager : MonoBehaviour
         Debug.Log("---- ESTADO DE LOS OBJETIVOS ----");
         foreach (var obj in objectives)
         {
-            Debug.Log($"{obj.description} ({obj.role}) -> {(obj.isCompleted ? "✔️ COMPLETADO" : "❌ PENDIENTE")}");
+            Debug.Log(
+                $"{obj.description} ({obj.role}) -> " +
+                $"{(obj.isCompleted ? "✔️ COMPLETADO" : "❌ PENDIENTE")} | " +
+                $"Puntos: {obj.points}"
+            );
         }
+    }
+
+    // Puntuación obtenida (solo objetivos completados)
+    public int GetFinalScore()
+    {
+        int score = 0;
+        foreach (var obj in objectives)
+        {
+            if (obj.isCompleted)
+                score += obj.points;
+        }
+        return score;
+    }
+
+    // Puntuación máxima posible (todos los objetivos)
+    public int GetMaxScore()
+    {
+        int total = 0;
+        foreach (var obj in objectives)
+        {
+            total += obj.points;
+        }
+        return total;
     }
 }

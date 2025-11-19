@@ -3,6 +3,9 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+
+// creo que no aparece en la escena
+
 public class UIObjectiveList : MonoBehaviour
 {
     public ObjectiveManager objectiveManager;
@@ -30,6 +33,7 @@ public class UIObjectiveList : MonoBehaviour
                 Image tick = go.transform.Find("TickIcon").GetComponent<Image>();
 
                 text.text = obj.description;
+                text.text = $"{obj.description}  <color=#888888>({obj.points} pts)</color>";
                 tick.enabled = obj.isCompleted;
 
                 // Guarda referencia para actualizar rápido

@@ -5,7 +5,8 @@ using TMPro;
 public class ObjectiveRowUI : MonoBehaviour
 {
     [Header("Referencias UI")]
-    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI titleText;         // Descripción
+    public TextMeshProUGUI pointsText;        // 🔹 Nuevo campo opcional para mostrar puntos
     public Toggle toggle;
 
     [Header("Colores y estilo")]
@@ -23,7 +24,6 @@ public class ObjectiveRowUI : MonoBehaviour
 
     private void Awake()
     {
-        // Autoconfigurar si no se ha hecho en el Inspector
         if (toggle == null)
             toggle = GetComponentInChildren<Toggle>();
 
@@ -32,22 +32,25 @@ public class ObjectiveRowUI : MonoBehaviour
 
         if (toggle != null)
         {
-            // El checkmark suele estar en Toggle/Background/Checkmark
-            var checkmark = toggle.graphic; // gráfico principal del Toggle
+            var checkmark = toggle.graphic;
             checkmarkImage = checkmark as Image;
-        }
-
-        // El jugador no debe cambiar los objetivos a mano
-        if (toggle != null)
             toggle.interactable = false;
+        }
     }
 
     public void Bind(Objective objective)
     {
         boundObjective = objective;
 
+        // 🔹 Opción A: Description + puntos en una única línea
+        // titleText.text = $"{objective.description}  <color=#888888>({objective.points} pts)</color>";
+
+        // 🔹 Opción B: Description arriba, puntos en un TMP aparte
         if (titleText != null)
             titleText.text = objective.description;
+
+        if (pointsText != null)
+            pointsText.text = $"{objective.points} pts";
 
         UpdateState();
     }
@@ -71,7 +74,7 @@ public class ObjectiveRowUI : MonoBehaviour
         if (checkmarkImage != null)
             checkmarkImage.color = completed ? completedCheckColor : pendingCheckColor;
 
-        // 3) Color y estilo del texto
+        // 3) Texto principal
         if (titleText != null)
         {
             titleText.color = completed ? completedTextColor : pendingTextColor;
@@ -86,6 +89,12 @@ public class ObjectiveRowUI : MonoBehaviour
             {
                 titleText.fontStyle = FontStyles.Normal;
             }
+        }
+
+        // 4) 🔹 Color del texto de puntos (si existe)
+        if (pointsText != null)
+        {
+            pointsText.color = completed ? completedTextColor : pendingTextColor;
         }
     }
 }
