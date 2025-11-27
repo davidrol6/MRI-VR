@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class GrabObjective : MonoBehaviour
 {
-    [Header("Referencia al ObjectiveManager")]
+    [Header("Reference to ObjectiveManager")]
     public ObjectiveManager objectiveManager;
 
-    [Header("Descripción exacta del objetivo")]
+    [Header("Exact description of the objective")]
     public string objectiveDescription;
 
-    [Header("Tiempo necesario para cumplir el objetivo (segundos)")]
+    [Header("Time required to complete the objective (seconds)")]
     public float requiredHoldTime = 2f;
 
     private float holdTimer = 0f;
@@ -17,7 +17,7 @@ public class GrabObjective : MonoBehaviour
 
     private void Awake()
     {
-        // Por si se te olvida asignarlo a mano
+        // Auto-assign ObjectiveManager if not set manually
         if (objectiveManager == null && ObjectiveManager.Instance != null)
         {
             objectiveManager = ObjectiveManager.Instance;
@@ -29,15 +29,17 @@ public class GrabObjective : MonoBehaviour
         if (objectiveCompleted || objectiveManager == null)
             return;
 
+        // Count time only while the object is being held
         if (isHeld)
         {
             holdTimer += Time.deltaTime;
 
+            // Objective completed only if held long enough
             if (holdTimer >= requiredHoldTime)
             {
                 objectiveCompleted = true;
 
-                Debug.Log($"🟢 Objetivo cumplido tras {requiredHoldTime} segundos: {objectiveDescription}");
+                Debug.Log($"Objective completed after {requiredHoldTime} seconds: {objectiveDescription}");
 
                 objectiveManager.CompleteObjective(objectiveDescription);
                 objectiveManager.PrintObjectivesStatus();
@@ -45,21 +47,21 @@ public class GrabObjective : MonoBehaviour
         }
         else
         {
-            // Si suelta antes del tiempo, se resetea
+            // Reset timer when the object is released early
             holdTimer = 0f;
         }
     }
 
-    // Estas funciones se llamarán desde los eventos del Meta SDK
+    // These functions are triggered by Meta SDK grab events
     public void OnGrab()
     {
-        Debug.Log($"✋ OnGrab para objetivo: {objectiveDescription}");
+        Debug.Log($"OnGrab for objective: {objectiveDescription}");
         isHeld = true;
     }
 
     public void OnRelease()
     {
-        Debug.Log($"❌ OnRelease para objetivo: {objectiveDescription}");
+        Debug.Log($"OnRelease for objective: {objectiveDescription}");
         isHeld = false;
     }
 }

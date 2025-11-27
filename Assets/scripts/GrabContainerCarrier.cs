@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Container that "holds" rigidbodies placed inside its trigger.
-/// Two modes:
-///  - ParentToNeutral: parents items under a neutral (1,1,1) child to avoid shear.
-///  - PhysicsFollow: no parenting; items follow the container via Rigidbody.MovePosition/MoveRotation.
-/// Also ignores collisions with the container while inside, if enabled.
+/// Lets a container carry rigidbodies placed inside its trigger.
+/// Two options:
+///  - ParentToNeutral: items are parented to a neutral child transform.
+///  - PhysicsFollow: no parenting; items follow the container using Rigidbody.MovePosition/MoveRotation.
+/// Optionally ignores collisions with the container while items are inside.
 /// </summary>
 public class GrabContainerCarrier : MonoBehaviour
 {
@@ -31,20 +31,20 @@ public class GrabContainerCarrier : MonoBehaviour
     [Tooltip("Ignore collisions between the item and the container while inside.")]
     public bool ignoreItemVsContainerColliders = true;
 
-    // --- Internals ---
     private readonly HashSet<Collider> _containerColliders = new();
     private readonly Dictionary<Rigidbody, CarryInfo> _inside = new();
 
     private class CarryInfo
     {
         public Transform originalParent;
-        public Vector3 localOffset;     // PhysicsFollow
-        public Quaternion localRotation;// PhysicsFollow
-        public ItemGrabEvents grab;     // optional
+        public Vector3 localOffset;      // PhysicsFollow
+        public Quaternion localRotation; // PhysicsFollow
+        public ItemGrabEvents grab;      // optional (to check if item is grabbed)
     }
 
     private void Reset()
     {
+        // Try to auto-assign a trigger collider from children
         if (containerTrigger == null)
             containerTrigger = GetComponentInChildren<Collider>();
     }
@@ -63,6 +63,7 @@ public class GrabContainerCarrier : MonoBehaviour
             containerTrigger.isTrigger = true;
         }
 
+        // Cache all colliders that belong to the container (except the trigger)
         foreach (var col in GetComponentsInChildren<Collider>())
         {
             if (col != containerTrigger)
@@ -80,23 +81,23 @@ public class GrabContainerCarrier : MonoBehaviour
                 neutralParent.localPosition = Vector3.zero;
                 neutralParent.localRotation = Quaternion.identity;
                 neutralParent.localScale = Vector3.one;
-                Debug.LogWarning("[GrabContainerCarrier] Created a neutral parent automatically. Ensure your box and its ancestors have uniform scale to avoid shear.");
+                Debug.LogWarning("[GrabContainerCarrier] Created a neutral parent automatically. Check your scaling to avoid deformation.");
             }
             else
             {
-                // Warn if the neutral parent is not neutral
+                // Neutral parent should be clean to avoid weird scaling
                 if (neutralParent.localScale != Vector3.one || neutralParent.localRotation != Quaternion.identity)
                 {
-                    Debug.LogWarning("[GrabContainerCarrier] 'neutralParent' should have localScale (1,1,1) and identity rotation to avoid deformation.");
+                    Debug.LogWarning("[GrabContainerCarrier] 'neutralParent' should have localScale (1,1,1) and identity rotation.");
                 }
             }
         }
 
-        // Warn if this container (or ancestors) have non-uniform lossyScale; parenting under them can shear.
+        // Warn if the container has non-uniform world scale (can cause shear with parenting)
         var s = transform.lossyScale;
         if (!Mathf.Approximately(s.x, s.y) || !Mathf.Approximately(s.y, s.z))
         {
-            Debug.LogWarning($"[GrabContainerCarrier] Non-uniform lossyScale detected on container ({s.x:F3},{s.y:F3},{s.z:F3}). Prefer PhysicsFollow mode or a truly neutral parent.");
+            Debug.LogWarning($"[GrabContainerCarrier] Non-uniform lossyScale on container ({s.x:F3},{s.y:F3},{s.z:F3}). Prefer PhysicsFollow or a neutral parent.");
         }
     }
 
@@ -123,11 +124,12 @@ public class GrabContainerCarrier : MonoBehaviour
 
         if (mode == CarryMode.ParentToNeutral)
         {
+            // Parent under neutral child (or container itself if neutral is missing)
             rb.transform.SetParent(neutralParent != null ? neutralParent : transform, true);
         }
         else // PhysicsFollow
         {
-            // Store relative pose at the moment of entry
+            // Store pose relative to the container at entry time
             info.localOffset   = transform.InverseTransformPoint(rb.position);
             info.localRotation = Quaternion.Inverse(transform.rotation) * rb.rotation;
         }
@@ -142,7 +144,7 @@ public class GrabContainerCarrier : MonoBehaviour
 
         if (_inside.TryGetValue(rb, out var info))
         {
-            // Restore parent if we had parented it
+            // Restore original parent if we had parented it
             if (mode == CarryMode.ParentToNeutral)
             {
                 rb.transform.SetParent(info.originalParent, true);
@@ -157,6 +159,7 @@ public class GrabContainerCarrier : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Only relevant in PhysicsFollow mode
         if (mode != CarryMode.PhysicsFollow) return;
         if (_inside.Count == 0) return;
 
@@ -167,14 +170,14 @@ public class GrabContainerCarrier : MonoBehaviour
 
             if (rb == null) continue;
 
-            // If the item is currently grabbed, do not force-follow; player has control.
+            // If the item is grabbed, let the player control it
             if (info.grab != null && info.grab.IsGrabbed) continue;
 
-            // Target pose = container * local
+            // Target pose = container transform * stored local pose
             Vector3 targetPos = transform.TransformPoint(info.localOffset);
             Quaternion targetRot = transform.rotation * info.localRotation;
 
-            // Move using physics-friendly methods
+            // Move via physics API to avoid teleporting
             rb.MovePosition(targetPos);
             rb.MoveRotation(targetRot);
         }
@@ -182,7 +185,7 @@ public class GrabContainerCarrier : MonoBehaviour
 
     private void OnDisable()
     {
-        // Cleanly restore everything
+        // Clean restore: parents and collision state
         foreach (var kv in _inside)
         {
             var rb = kv.Key;
@@ -198,11 +201,9 @@ public class GrabContainerCarrier : MonoBehaviour
         _inside.Clear();
     }
 
-    // --- Utilities ---
     private bool IsMyTriggerEvent(Collider other)
     {
-        // This script only receives events when *our* trigger is involved,
-        // but we keep the guard for robustness.
+        // Guard just in case; this script should only receive events from our trigger
         return containerTrigger != null && other != null;
     }
 
@@ -223,9 +224,11 @@ public class GrabContainerCarrier : MonoBehaviour
     private void ToggleIgnoreCollisions(Rigidbody itemRb, bool ignore)
     {
         if (itemRb == null) return;
+
         foreach (var itemCol in itemRb.GetComponentsInChildren<Collider>())
         {
             if (itemCol == null) continue;
+
             foreach (var contCol in _containerColliders)
             {
                 if (contCol == null) continue;
@@ -242,6 +245,7 @@ public class GrabContainerCarrier : MonoBehaviour
             Gizmos.color = new Color(0f, 0.6f, 1f, 0.15f);
             Gizmos.matrix = box.transform.localToWorldMatrix;
             Gizmos.DrawCube(box.center, box.size);
+
             Gizmos.color = new Color(0f, 0.6f, 1f, 0.8f);
             Gizmos.DrawWireCube(box.center, box.size);
         }

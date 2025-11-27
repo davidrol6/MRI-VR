@@ -4,59 +4,63 @@ using UnityEngine.UI;
 public class OVRTeleportToPose : MonoBehaviour
 {
     [Header("Rig (OVR)")]
-    [Tooltip("Root del rig: el objeto '[BuildingBlock] Camera Rig'")]
+    [Tooltip("Root of the rig, e.g. '[BuildingBlock] Camera Rig'.")]
     public Transform rigRoot;
 
-    [Tooltip("El CenterEyeAnchor: TrackingSpace/CenterEyeAnchor")]
+    [Tooltip("The CenterEyeAnchor, e.g. TrackingSpace/CenterEyeAnchor.")]
     public Transform centerEyeAnchor;
 
-    [Header("Destino")]
-    [Tooltip("Transform al que quieres llevar la cabeza (posición del ojo) y su rotación.")]
+    [Header("Destination")]
+    [Tooltip("Transform that defines the desired head position (eye) and orientation.")]
     public Transform targetPose;
 
-    [Header("Orientación")]
-    [Tooltip("Alinear solo el yaw (true) o alinear rotación completa (false se ignora si alignFullRotation = true).")]
+    [Header("Orientation")]
+    [Tooltip("If true, align only the yaw. Ignored if alignFullRotation is true.")]
     public bool matchTargetYaw = true;
 
-    [Tooltip("Si está activo, alinea Yaw+Pitch+Roll de la cámara con el target.")]
+    [Tooltip("If true, align full rotation (yaw + pitch + roll) of the camera to the target.")]
     public bool alignFullRotation = true;
 
-    [Tooltip("Offset extra sobre el yaw final (grados). Solo se usa si alignFullRotation = false.")]
+    [Tooltip("Extra yaw offset in degrees. Used only if alignFullRotation is false.")]
     public float yawOffsetDeg = 0f;
 
-    [Header("Opcional")]
-    [Tooltip("Si tu rig lleva CharacterController, arrástralo aquí para evitar empujones.")]
+    [Header("Optional")]
+    [Tooltip("If your rig uses a CharacterController, assign it here to avoid pushback when teleporting.")]
     public CharacterController rigCharacterController;
 
-    [Header("UI (opcional)")]
-    [Tooltip("Si lo asignas, al activar el Toggle se teletransporta.")]
+    [Header("UI (optional)")]
+    [Tooltip("If assigned, teleport will be triggered when the Toggle changes state.")]
     public Toggle triggerToggle;
     public bool teleportOnToggleIsOn = true;
 
-    void Reset()
+    private void Reset()
     {
-        if (!rigRoot) rigRoot = transform;
+        if (!rigRoot) 
+            rigRoot = transform;
+
         if (!centerEyeAnchor)
         {
             var t = transform.Find("TrackingSpace/CenterEyeAnchor");
             if (t) centerEyeAnchor = t;
         }
-        if (!triggerToggle) triggerToggle = GetComponent<Toggle>();
+
+        if (!triggerToggle) 
+            triggerToggle = GetComponent<Toggle>();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         if (triggerToggle)
             triggerToggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (triggerToggle)
             triggerToggle.onValueChanged.RemoveListener(OnToggleChanged);
     }
 
-    void OnToggleChanged(bool isOn)
+    private void OnToggleChanged(bool isOn)
     {
         if (teleportOnToggleIsOn == isOn)
             TeleportNow();
@@ -67,7 +71,7 @@ public class OVRTeleportToPose : MonoBehaviour
     {
         if (!rigRoot || !centerEyeAnchor || !targetPose)
         {
-            Debug.LogWarning("[OVRTeleportToPose] Asigna rigRoot, centerEyeAnchor y targetPose.");
+            Debug.LogWarning("[OVRTeleportToPose] Please assign rigRoot, centerEyeAnchor and targetPose.");
             return;
         }
 
@@ -78,10 +82,10 @@ public class OVRTeleportToPose : MonoBehaviour
             rigCharacterController.enabled = false;
         }
 
-        // --- 1) ORIENTACIÓN ---
+        // ORIENTATION
         if (alignFullRotation)
         {
-            // Alinear rotación mundial de la cámara (incluye yaw, pitch y roll)
+            // Match full world rotation of the camera (yaw + pitch + roll)
             Quaternion camWorldRot = centerEyeAnchor.rotation;
             Quaternion desiredWorldRot = targetPose.rotation;
             Quaternion deltaRot = desiredWorldRot * Quaternion.Inverse(camWorldRot);
@@ -90,15 +94,15 @@ public class OVRTeleportToPose : MonoBehaviour
         }
         else if (matchTargetYaw)
         {
-            // Solo yaw
+            // Match yaw only
             float currentYaw = centerEyeAnchor.eulerAngles.y;
             float desiredYaw = targetPose.eulerAngles.y + yawOffsetDeg;
             float deltaYaw = Mathf.DeltaAngle(currentYaw, desiredYaw);
             RotateRigAroundPointAxis(rigRoot, centerEyeAnchor.position, Vector3.up, deltaYaw);
         }
 
-        // --- 2) POSICIÓN ---
-        // Tras girar, reposicionamos el rig para que la cabeza caiga EXACTAMENTE en targetPose.position
+        // POSITION
+        // After rotation, reposition the rig so the head lands exactly at targetPose.position
         Vector3 afterCamPos = centerEyeAnchor.position;
         Vector3 deltaPos = targetPose.position - afterCamPos;
         rigRoot.position += deltaPos;
@@ -107,8 +111,8 @@ public class OVRTeleportToPose : MonoBehaviour
             rigCharacterController.enabled = hadCC;
     }
 
-    // Rotar el rig alrededor de un punto aplicando un eje/ángulo
-    static void RotateRigAroundPointAxis(Transform rig, Vector3 pivotWorld, Vector3 axisWorld, float angleDeg)
+    // Rotate rig around a world-space pivot using axis/angle.
+    private static void RotateRigAroundPointAxis(Transform rig, Vector3 pivotWorld, Vector3 axisWorld, float angleDeg)
     {
         Vector3 toRig = rig.position - pivotWorld;
         Quaternion q = Quaternion.AngleAxis(angleDeg, axisWorld);
@@ -116,8 +120,8 @@ public class OVRTeleportToPose : MonoBehaviour
         rig.rotation = q * rig.rotation;
     }
 
-    // Rotar el rig alrededor de un punto aplicando un QUATERNION completo (yaw+pitch+roll)
-    static void RotateRigAroundPointQuat(Transform rig, Vector3 pivotWorld, Quaternion deltaRot)
+    // Rotate rig around a world-space pivot using a full quaternion (yaw + pitch + roll).
+    private static void RotateRigAroundPointQuat(Transform rig, Vector3 pivotWorld, Quaternion deltaRot)
     {
         Vector3 toRig = rig.position - pivotWorld;
         rig.position = pivotWorld + deltaRot * toRig;

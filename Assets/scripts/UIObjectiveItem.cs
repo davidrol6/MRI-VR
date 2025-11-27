@@ -10,7 +10,7 @@ public class UIObjectiveItem : MonoBehaviour
     public void Setup(Objective obj)
     {
         descriptionText.text = obj.description;
-        checkIcon.enabled = obj.isCompleted; // activa tick solo si está completado
+        checkIcon.enabled = obj.isCompleted; // activates tick only if completed
     }
 
     public void Refresh(Objective obj)

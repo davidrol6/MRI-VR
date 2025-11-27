@@ -2,24 +2,24 @@ using UnityEngine;
 
 public class DropInZoneObjective : MonoBehaviour
 {
-    [Header("Zona donde debe dejarse el objeto")]
-    public Collider targetZone;        // BoxCollider de la zona
+    [Header("Zone where the object must be dropped")]
+    public Collider targetZone;        // BoxCollider of the drop zone
 
-    [Header("Punto exacto de colocación")]
-    public Transform snapPoint;        // Transform con la posición/rotación final
+    [Header("Exact placement point")]
+    public Transform snapPoint;        // Final position/rotation
 
-    [Header("Objetivo asociado")]
+    [Header("Linked objective")]
     public ObjectiveManager objectiveManager;
     public string objectiveDescription;
 
-    [Tooltip("Si es true, solo se completará/snapeará la primera vez.")]
+    [Tooltip("If true, snapping/completion will only happen the first time.")]
     public bool onlyOnce = true;
 
-    [Tooltip("Si es true, desactiva el Grabbable al hacer snap para evitar que vuelva a la mano.")]
+    [Tooltip("If true, disable the grabbable after snapping so it cannot be picked up again.")]
     public bool disableGrabbableOnSnap = true;
 
     private Rigidbody rb;
-    private ItemGrabEvents grabEvents;   // 👈 el script que ya tienes en el objeto
+    private ItemGrabEvents grabEvents;
     private bool objectiveCompleted = false;
     private bool hasSnapped = false;
     private bool wasGrabbedLastFrame = false;
@@ -37,24 +37,24 @@ public class DropInZoneObjective : MonoBehaviour
     {
         if (onlyOnce && hasSnapped) return;
         if (targetZone == null || snapPoint == null) return;
-        if (grabEvents == null) return;  // necesitamos saber si está agarrado
+        if (grabEvents == null) return;  // we need grab state
 
         bool grabbedNow = grabEvents.IsGrabbed;
 
-        // Transición: ESTABA agarrado y AHORA ya no → acaban de soltarlo
+        // Transition: was grabbed last frame and now is not → just released
         if (wasGrabbedLastFrame && !grabbedNow)
         {
-            // Justo en el frame en el que se ha soltado miramos si está dentro de la zona
+            // On the frame of release, check if it's inside the zone
             if (IsInsideZone())
             {
-                Debug.Log($"📌 {name} se ha soltado dentro de la zona {targetZone.name}. Haciendo snap limpio…");
+                Debug.Log($"{name} was released inside zone {targetZone.name}. Snapping to point.");
                 SnapToPoint();
                 CompleteObjective();
                 hasSnapped = true;
             }
             else
             {
-                Debug.Log($"{name} se ha soltado fuera de la zona {targetZone.name}.");
+                Debug.Log($"{name} was released outside zone {targetZone.name}.");
             }
         }
 
@@ -70,21 +70,22 @@ public class DropInZoneObjective : MonoBehaviour
 
     private void SnapToPoint()
     {
-        Debug.Log($"🔧 SnapToPoint: moviendo {name} a {snapPoint.position} / rot {snapPoint.rotation.eulerAngles}");
+        Debug.Log($"SnapToPoint: moving {name} to {snapPoint.position} / rot {snapPoint.rotation.eulerAngles}");
 
-        // Colocar el objeto exactamente en el punto definido
+        // Place object exactly at the defined point
         transform.position = snapPoint.position;
         transform.rotation = snapPoint.rotation;
 
-        // Parar físicas
+        // Stop physics
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;   // Unity 6
             rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;             // que se quede fijo
+            rb.isKinematic = true;             // keep it fixed
         }
 
-        
+        // If you ever want to use 'disableGrabbableOnSnap', 
+        // this is the place to disable grab components.
     }
 
     private void CompleteObjective()
@@ -94,7 +95,7 @@ public class DropInZoneObjective : MonoBehaviour
         if (objectiveManager != null && !string.IsNullOrEmpty(objectiveDescription))
         {
             objectiveCompleted = true;
-            Debug.Log($"🟢 Objetivo por colocar objeto cumplido: {objectiveDescription}");
+            Debug.Log($"Drop objective completed: {objectiveDescription}");
             objectiveManager.CompleteObjective(objectiveDescription);
             objectiveManager.PrintObjectivesStatus();
         }

@@ -3,46 +3,46 @@ using UnityEngine.UI;
 
 public class UIButtonObjectiveTrigger : MonoBehaviour
 {
-    [Header("Referencia al ObjectiveManager")]
+    [Header("Reference to ObjectiveManager")]
     public ObjectiveManager objectiveManager;
 
-    [Header("Descripción exacta del objetivo")]
+    [Header("Exact objective description")]
     public string objectiveDescription;
 
-    [Header("Solo para toggles (opcional)")]
-    public Toggle toggleButton; 
+    [Header("For toggles (optional)")]
+    public Toggle toggleButton;
 
-    [Header("Solo para botones (opcional)")]
+    [Header("For regular buttons (optional)")]
     public Button normalButton;
 
-    void Start()
+    private void Start()
     {
-        // Si es un toggle
+        // Toggle UI event
         if (toggleButton != null)
         {
             toggleButton.onValueChanged.AddListener(OnToggleChanged);
         }
 
-        // Si es un botón normal
+        // Regular button UI event
         if (normalButton != null)
         {
             normalButton.onClick.AddListener(OnButtonClicked);
         }
     }
 
-    void OnToggleChanged(bool isOn)
+    private void OnToggleChanged(bool isOn)
     {
         if (isOn)
         {
-            Debug.Log($"🟢 Toggle pulsado para objetivo: {objectiveDescription}");
+            Debug.Log($"Toggle activated for objective: {objectiveDescription}");
             objectiveManager.CompleteObjective(objectiveDescription);
-            objectiveManager.PrintObjectivesStatus(); // Para ver toda la lista en consola
+            objectiveManager.PrintObjectivesStatus();
         }
     }
 
-    void OnButtonClicked()
+    private void OnButtonClicked()
     {
-        Debug.Log("Botón pulsado: " + objectiveDescription);
+        Debug.Log("Button clicked: " + objectiveDescription);
         objectiveManager.CompleteObjective(objectiveDescription);
     }
 }

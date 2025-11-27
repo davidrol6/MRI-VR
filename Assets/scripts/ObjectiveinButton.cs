@@ -1,11 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Detects a "poke" (finger/contact) via collider trigger or collision,
-/// reproduces button press/release behavior (pressMode, debounce, animation),
-/// and triggers an objective when pressed.
-/// </summary>
 [RequireComponent(typeof(Collider))]
 public class PhysicalPokeObjectiveTrigger : MonoBehaviour
 {
@@ -35,10 +30,11 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
     private Vector3 _btnPressedLocalPos;
     private Coroutine _buttonRoutine;
 
-    void Awake()
+    private void Awake()
     {
+        // Use trigger collider to detect finger/contact without applying forces
         Collider col = GetComponent<Collider>();
-        col.isTrigger = true; // required to detect poke contact without physics forces
+        col.isTrigger = true;
 
         if (buttonVisual != null)
         {
@@ -49,7 +45,7 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Optional: you could filter by tag (e.g., “Finger” or “Hand”)
+        // Optionally filter by tag (e.g. "Finger" or "Hand") if needed
         OnPress();
     }
 
@@ -72,9 +68,8 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         if (animateButton && buttonVisual != null)
             StartMoveButton(_btnPressedLocalPos);
 
-        Debug.Log($"👉 Physical poke detected on {gameObject.name}");
+        Debug.Log($"Physical poke detected on {gameObject.name}");
 
-        // Action logic
         if (pressMode == PressMode.Toggle)
         {
             TriggerObjective();
@@ -102,19 +97,19 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         }
     }
 
-    // ---------------- Action ----------------
+    // ---------------- Objective Action ----------------
 
     private void TriggerObjective()
     {
         if (objectiveManager != null)
         {
-            Debug.Log($"✅ Objective triggered: {objectiveDescription}");
+            Debug.Log($"Objective triggered: {objectiveDescription}");
             objectiveManager.CompleteObjective(objectiveDescription);
             objectiveManager.PrintObjectivesStatus();
         }
         else
         {
-            Debug.LogWarning("⚠️ No ObjectiveManager assigned.");
+            Debug.LogWarning("[PhysicalPokeObjectiveTrigger] No ObjectiveManager assigned.");
         }
     }
 
@@ -123,7 +118,7 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         while (_isPressed)
         {
             TriggerObjective();
-            yield return new WaitForSeconds(0.5f); // repeat every half second while holding
+            yield return new WaitForSeconds(0.5f); // repeat while held
         }
     }
 
@@ -150,6 +145,7 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
             yield return null;
         }
 
-        if (snapAtEnd) buttonVisual.localPosition = dest;
+        if (snapAtEnd)
+            buttonVisual.localPosition = dest;
     }
 }

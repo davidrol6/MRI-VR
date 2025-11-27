@@ -4,24 +4,24 @@ using UnityEngine;
 public class UIAreaFollowCanvas : MonoBehaviour
 {
     [Header("References")]
-    public RectTransform canvasRoot;         // RectTransform del Canvas (World Space)
-    public Transform followTarget;           // La cámara; si es null, usa Camera.main
-    public CanvasGroup canvasGroup;          // Para fade in/out (asignar el del Canvas)
+    public RectTransform canvasRoot;    // RectTransform of the Canvas (World Space)
+    public Transform followTarget;      // Usually the camera; if null, uses Camera.main
+    public CanvasGroup canvasGroup;     // For fade in/out (CanvasGroup on the Canvas root)
 
     [Header("Placement")]
-    [Tooltip("Distancia por delante de la cámara donde se colocará el Canvas (en metros).")]
+    [Tooltip("Distance in front of the camera where the Canvas will appear (in meters).")]
     public float forwardDistance = 1.2f;
-    [Tooltip("Desplazamiento vertical respecto a la cámara (en metros).")]
+    [Tooltip("Vertical offset relative to the camera (in meters).")]
     public float verticalOffset = 0.0f;
 
     [Header("Smoothing")]
-    [Tooltip("Suavizado de posición (mayor = más rápido).")]
+    [Tooltip("Position smoothing (higher = faster).")]
     public float positionLerpSpeed = 10f;
-    [Tooltip("Suavizado de rotación (mayor = más rápido).")]
+    [Tooltip("Rotation smoothing (higher = faster).")]
     public float rotationLerpSpeed = 12f;
 
     [Header("Facing")]
-    [Tooltip("Si true, el Canvas gira sólo en Y (no inclina con el pitch de la cabeza).")]
+    [Tooltip("If true, the Canvas only rotates around Y (ignores head pitch/roll).")]
     public bool yawOnly = true;
 
     [Header("Fade")]
@@ -30,68 +30,84 @@ public class UIAreaFollowCanvas : MonoBehaviour
 
     [Header("Debug")]
     public bool startHidden = true;
+
     private Quaternion baseRotationOffset;
 
-    Collider _area; 
-    bool _playerInside = false;
-    bool _isVisible = false;
+    private Collider _area;
+    private bool _playerInside = false;
+    private bool _isVisible = false;
 
-    void Reset()
+    private void Reset()
     {
         var col = GetComponent<Collider>();
         if (col) col.isTrigger = true;
     }
 
-    void Awake()
+    private void Awake()
     {
         _area = GetComponent<Collider>();
         if (!_area)
-            Debug.LogWarning("[UIAreaFollowCanvas] Este objeto necesita un Collider marcado como Trigger.");
+            Debug.LogWarning("[UIAreaFollowCanvas] This object needs a Collider set as Trigger.");
 
         if (!canvasGroup && canvasRoot)
             canvasGroup = canvasRoot.GetComponent<CanvasGroup>();
 
-        if (startHidden) SetVisibleImmediate(false);
+        if (startHidden)
+            SetVisibleImmediate(false);
+
         baseRotationOffset = canvasRoot.rotation;
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         if (!followTarget)
         {
-            // Intenta encontrar la cámara principal (VR o desktop)
+            // Try to find the main camera (VR or desktop)
             var cam = Camera.main;
             if (cam) followTarget = cam.transform;
         }
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         if (!_isVisible || !canvasRoot || !followTarget) return;
 
-        // Posición objetivo: delante de la cámara + offset vertical
-        Vector3 desiredPos = followTarget.position + followTarget.forward * forwardDistance + Vector3.up * verticalOffset;
-        canvasRoot.position = Vector3.Lerp(canvasRoot.position, desiredPos, Time.deltaTime * positionLerpSpeed);
+        // Target position: in front of the camera + vertical offset
+        Vector3 desiredPos =
+            followTarget.position +
+            followTarget.forward * forwardDistance +
+            Vector3.up * verticalOffset;
 
-        // Orientar mirando a la cámara (tipo billboard)
+        canvasRoot.position = Vector3.Lerp(
+            canvasRoot.position,
+            desiredPos,
+            Time.deltaTime * positionLerpSpeed
+        );
+
+        // Rotate to face the camera (billboard-style)
         Quaternion targetRot;
         if (yawOnly)
         {
             Vector3 toCam = canvasRoot.position - followTarget.position;
-            toCam.y = 0f; // sin pitch/roll
+            toCam.y = 0f;
             if (toCam.sqrMagnitude < 0.0001f) return;
             targetRot = Quaternion.LookRotation(toCam);
         }
         else
         {
-            // En vez de mirar HACIA la cámara, mira en la dirección opuesta
-        targetRot = Quaternion.LookRotation(canvasRoot.position - followTarget.position);
+            // Look directly towards the camera
+            targetRot = Quaternion.LookRotation(canvasRoot.position - followTarget.position);
         }
-        canvasRoot.rotation = Quaternion.Slerp(canvasRoot.rotation, targetRot, Time.deltaTime * rotationLerpSpeed);
+
+        canvasRoot.rotation = Quaternion.Slerp(
+            canvasRoot.rotation,
+            targetRot,
+            Time.deltaTime * rotationLerpSpeed
+        );
     }
 
-    // --- Detección por Trigger ---
-    void OnTriggerEnter(Collider other)
+    // --- Trigger detection ---
+    private void OnTriggerEnter(Collider other)
     {
         if (IsPlayerRoot(other.transform))
         {
@@ -100,7 +116,7 @@ public class UIAreaFollowCanvas : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (IsPlayerRoot(other.transform))
         {
@@ -109,16 +125,16 @@ public class UIAreaFollowCanvas : MonoBehaviour
         }
     }
 
-    bool IsPlayerRoot(Transform t)
+    private bool IsPlayerRoot(Transform t)
     {
-        // Acepta Player o MainCamera, o cualquier cosa que contenga una Camera
+        // Accepts Player or MainCamera tags or anything that has a Camera in children/parents
         if (t.CompareTag("Player") || t.CompareTag("MainCamera")) return true;
         if (t.GetComponentInChildren<Camera>() != null) return true;
         if (t.GetComponentInParent<Camera>() != null) return true;
         return false;
     }
 
-    // --- Visibilidad y Fade ---
+    // --- Visibility & Fade ---
     public void Show()
     {
         if (_isVisible) return;
@@ -135,30 +151,37 @@ public class UIAreaFollowCanvas : MonoBehaviour
         StartCoroutine(FadeTo(0f, fadeOutTime));
     }
 
-    void SetVisibleImmediate(bool visible)
+    private void SetVisibleImmediate(bool visible)
     {
         _isVisible = visible;
-        if (canvasGroup) canvasGroup.alpha = visible ? 1f : 0f;
-        if (canvasRoot) canvasRoot.gameObject.SetActive(true); // mantenlo activo para poder interpolar
+
+        if (canvasGroup)
+            canvasGroup.alpha = visible ? 1f : 0f;
+
+        if (canvasRoot)
+            canvasRoot.gameObject.SetActive(true); // keep active so position/rotation can update
     }
 
-    IEnumerator FadeTo(float target, float time)
+    private IEnumerator FadeTo(float target, float time)
     {
         if (!canvasGroup)
         {
-            // Si no hay CanvasGroup, alterna activo/inactivo
-            canvasRoot.gameObject.SetActive(target > 0.5f);
+            // If there is no CanvasGroup, just toggle active state
+            if (canvasRoot)
+                canvasRoot.gameObject.SetActive(target > 0.5f);
             yield break;
         }
 
         float start = canvasGroup.alpha;
         float t = 0f;
+
         while (t < time)
         {
             t += Time.deltaTime;
             canvasGroup.alpha = Mathf.Lerp(start, target, t / time);
             yield return null;
         }
+
         canvasGroup.alpha = target;
     }
 }

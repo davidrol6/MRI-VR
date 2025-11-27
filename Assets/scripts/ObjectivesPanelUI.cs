@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 public class ObjectivesPanelUI : MonoBehaviour
 {
-    [Header("Referencias")]
+    [Header("References")]
     public ObjectiveManager objectiveManager;
     public Transform contentParent;          // ScrollView/Viewport/Content
-    public GameObject objectiveRowPrefab;    // Prefab de la fila
+    public GameObject objectiveRowPrefab;    // Objective row prefab
 
     private List<ObjectiveRowUI> rows = new List<ObjectiveRowUI>();
 
@@ -17,11 +17,11 @@ public class ObjectivesPanelUI : MonoBehaviour
 
         if (objectiveManager != null)
         {
-            // Nos suscribimos al evento
+            // Subscribe to objective completion event
             objectiveManager.OnObjectiveCompleted += HandleObjectiveCompleted;
         }
 
-        // Construimos la lista solo una vez (o cada vez que se habilite, según lo que necesites)
+        // Build the list when the panel is enabled
         BuildList();
     }
 
@@ -35,7 +35,7 @@ public class ObjectivesPanelUI : MonoBehaviour
 
     private void BuildList()
     {
-        // Limpia filas previas si las hubiera
+        // Clear previous rows
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
@@ -44,6 +44,7 @@ public class ObjectivesPanelUI : MonoBehaviour
 
         if (objectiveManager == null) return;
 
+        // Create one row per objective
         foreach (var obj in objectiveManager.objectives)
         {
             GameObject rowGO = Instantiate(objectiveRowPrefab, contentParent);
@@ -57,7 +58,7 @@ public class ObjectivesPanelUI : MonoBehaviour
         }
     }
 
-    // Se llama cuando se completa un objetivo
+    // Called when an objective is completed
     private void HandleObjectiveCompleted(Objective completedObjective)
     {
         foreach (var row in rows)
@@ -69,5 +70,4 @@ public class ObjectivesPanelUI : MonoBehaviour
             }
         }
     }
-
 }

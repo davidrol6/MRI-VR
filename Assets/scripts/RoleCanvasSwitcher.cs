@@ -3,7 +3,7 @@ using UnityEngine;
 public class RoleCanvasSwitcher : MonoBehaviour
 {
     [Header("Role Source")]
-    [SerializeField] private RoleProvider roleProvider; 
+    [SerializeField] private RoleProvider roleProvider;
 
     [Header("Scene Canvases")]
     [SerializeField] private GameObject patientCanvas;
@@ -21,12 +21,12 @@ public class RoleCanvasSwitcher : MonoBehaviour
         }
     }
 
-    // Toggle hook: true = show, false = hide
+    // Toggle callback
     public void OnToggleChanged(bool on)
     {
         if (roleProvider == null)
         {
-            Debug.LogError("[RoleCanvasSwitcher] No RoleProvider found/assigned.");
+            Debug.LogError("[RoleCanvasSwitcher] No RoleProvider assigned or found.");
             return;
         }
 
@@ -38,18 +38,20 @@ public class RoleCanvasSwitcher : MonoBehaviour
 
         ShowForCurrentRole();
     }
+
     public void ShowForCurrentRole()
     {
         Debug.Log("[RoleCanvasSwitcher] Current role: " + roleProvider.role);
-        bool isPatient = roleProvider.role == Role.Patient;
-        if (patientCanvas)   patientCanvas.SetActive(isPatient);
-        if (technicianCanvas) technicianCanvas.SetActive(!isPatient);
-    }
 
+        bool isPatient = roleProvider.role == Role.Patient;
+
+        if (patientCanvas)     patientCanvas.SetActive(isPatient);
+        if (technicianCanvas)  technicianCanvas.SetActive(!isPatient);
+    }
 
     public void HideAll()
     {
-        if (patientCanvas)   patientCanvas.SetActive(false);
-        if (technicianCanvas) technicianCanvas.SetActive(false);
+        if (patientCanvas)     patientCanvas.SetActive(false);
+        if (technicianCanvas)  technicianCanvas.SetActive(false);
     }
 }

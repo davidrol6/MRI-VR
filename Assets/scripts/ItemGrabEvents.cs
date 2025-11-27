@@ -2,22 +2,25 @@ using UnityEngine;
 
 public class ItemGrabEvents : MonoBehaviour
 {
-    [Tooltip("Optional: reference to Item (auto-fetched if null).")]
+    [Tooltip("Optional: reference to the Item component (auto-detected if left empty).")]
     public Item item;
-    [Tooltip("True while the item is being held (grabbed).")]
+
+    [Tooltip("True while the item is currently grabbed.")]
     public bool IsGrabbed { get; private set; }
 
     private void Awake()
     {
-        if (item == null) item = GetComponent<Item>();
+        // Auto-assign Item component if not set manually
+        if (item == null) 
+            item = GetComponent<Item>();
     }
 
-    // Hook this to the SDK's "On Select/Grab Begin" UnityEvent
+    // Connect this to the SDK's "On Select/Grab Begin" event
     public void OnGrabBegin()
     {
         IsGrabbed = true;
 
-        // If the item is sitting in a slot, free that slot now
+        // If the item was sitting in a slot, detach it
         if (item.inSlot)
         {
             var parentSlot = item.currentSlot;
@@ -26,10 +29,10 @@ public class ItemGrabEvents : MonoBehaviour
                 parentSlot.ItemInSlot = null;
                 item.inSlot = false;
 
-                // Break parent so the item is truly detached
+                // Detach from slot's transform
                 transform.parent = null;
 
-                // Restore slot UI color
+                // Restore slot UI visuals
                 parentSlot.ResetColor();
 
                 item.currentSlot = null;
@@ -37,10 +40,10 @@ public class ItemGrabEvents : MonoBehaviour
         }
     }
 
-    // Hook this to the SDK's "On Unselect/Grab End" UnityEvent
+    // Connect this to the SDK's "On Unselect/Grab End" event
     public void OnGrabEnd()
     {
         IsGrabbed = false;
-        // The Slot will detect this state (not grabbed) inside its trigger and snap the item in.
+        // Slots check for this state inside their trigger and will snap the item back in automatically.
     }
 }

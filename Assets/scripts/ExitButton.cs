@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class ExitToggle : MonoBehaviour
 {
-    // Este método recibe el estado del Toggle (true = activado, false = desactivado)
+    // Called by the Toggle. 'isOn' is true when the toggle is switched on.
     public void OnExitToggleChanged(bool isOn)
     {
         if (isOn)
         {
-            // Cierra el juego si está compilado
+            // Quit the application in a built version
             Application.Quit();
 
-            // Si estás en el Editor, detiene la simulación
 #if UNITY_EDITOR
+            // In the Unity Editor, stop play mode instead of quitting
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
         }

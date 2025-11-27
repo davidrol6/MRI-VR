@@ -4,12 +4,12 @@ using TMPro;
 
 public class ObjectiveRowUI : MonoBehaviour
 {
-    [Header("Referencias UI")]
-    public TextMeshProUGUI titleText;         // Descripción
-    public TextMeshProUGUI pointsText;        // 🔹 Nuevo campo opcional para mostrar puntos
+    [Header("UI References")]
+    public TextMeshProUGUI titleText;     // Objective description
+    public TextMeshProUGUI pointsText;    // Optional points label
     public Toggle toggle;
 
-    [Header("Colores y estilo")]
+    [Header("Colors & Style")]
     public Color pendingTextColor = Color.white;
     public Color completedTextColor = Color.green;
 
@@ -18,7 +18,7 @@ public class ObjectiveRowUI : MonoBehaviour
 
     public bool useStrikethroughOnComplete = true;
 
-    // Referencias internas
+    // Internal references
     private Objective boundObjective;
     private Image checkmarkImage;
 
@@ -34,7 +34,7 @@ public class ObjectiveRowUI : MonoBehaviour
         {
             var checkmark = toggle.graphic;
             checkmarkImage = checkmark as Image;
-            toggle.interactable = false;
+            toggle.interactable = false; // UI is for display only
         }
     }
 
@@ -42,10 +42,6 @@ public class ObjectiveRowUI : MonoBehaviour
     {
         boundObjective = objective;
 
-        // 🔹 Opción A: Description + puntos en una única línea
-        // titleText.text = $"{objective.description}  <color=#888888>({objective.points} pts)</color>";
-
-        // 🔹 Opción B: Description arriba, puntos en un TMP aparte
         if (titleText != null)
             titleText.text = objective.description;
 
@@ -66,15 +62,15 @@ public class ObjectiveRowUI : MonoBehaviour
 
         bool completed = boundObjective.isCompleted;
 
-        // 1) Toggle encendido/apagado
+        // Toggle visual
         if (toggle != null)
             toggle.isOn = completed;
 
-        // 2) Color del check
+        // Checkmark color
         if (checkmarkImage != null)
             checkmarkImage.color = completed ? completedCheckColor : pendingCheckColor;
 
-        // 3) Texto principal
+        // Main text styling
         if (titleText != null)
         {
             titleText.color = completed ? completedTextColor : pendingTextColor;
@@ -91,7 +87,7 @@ public class ObjectiveRowUI : MonoBehaviour
             }
         }
 
-        // 4) 🔹 Color del texto de puntos (si existe)
+        // Points label color
         if (pointsText != null)
         {
             pointsText.color = completed ? completedTextColor : pendingTextColor;

@@ -3,11 +3,11 @@ using UnityEngine;
 [System.Serializable]
 public class Objective
 {
-    [Header("Datos del objetivo")]
+    [Header("Objective data")]
     public string description;
     public Role role;
     public bool isCompleted;
 
-    [Header("Puntos del objetivo")]
-    public int points = 10;   // valor por defecto
+    [Header("Objective points")]
+    public int points = 10; // Default value
 }

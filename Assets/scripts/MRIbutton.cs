@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class ButtonMovesObject : MonoBehaviour
 {
     public enum MovementSpace { World, Local }
-    public enum PressMode { Toggle, Hold } // Toggle: paso discreto; Hold: continuo
+    public enum PressMode { Toggle, Hold }
 
     [Header("Target to move")]
     public Transform target;
@@ -14,24 +14,27 @@ public class ButtonMovesObject : MonoBehaviour
     public PressMode pressMode = PressMode.Hold;
     public MovementSpace space = MovementSpace.World;
 
-    [Tooltip("Direction of movement for THIS button (se usa solo para el signo en el eje canónico).")]
+    [Tooltip("Direction of movement for this button (used for sign and axis).")]
     public Vector3 direction = Vector3.right;
 
     [Tooltip("Step length along the axis per press (Toggle). Can be negative.")]
     public float distance = 0.25f;
 
-    [Header("Animation (TARGET)")]
-    [Min(0.001f)] public float speed = 0.5f; // Toggle: velocidad de animación; Hold: m/s
+    [Header("Animation (Target)")]
+    [Min(0.001f)] public float speed = 0.5f;        // Toggle: animation speed; Hold: m/s along axis
     public AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Animation (BUTTON SELF-PUSH)")]
+    [Header("Animation (Button visual push)")]
     public bool animateButtonSelf = true;
     public Transform buttonToTranslate;
+
     public enum Axis { X, Y, Z, Custom }
     public Axis buttonAxis = Axis.Z;
     public Vector3 customAxis = Vector3.forward;
+
     [Tooltip("Travel distance along the chosen axis (negative to invert).")]
     public float buttonTravel = -0.01f;
+
     [Min(0.001f)] public float buttonSpeed = 0.2f;
     public AnimationCurve buttonEase = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public bool buttonSnapExactlyAtEnd = true;
@@ -60,22 +63,24 @@ public class ButtonMovesObject : MonoBehaviour
     public PassengerZone passengerZone;
     public bool movePassengersOnSnap = true;
 
-    // -------------------- OBJECTIVE SYSTEM --------------------
+    // OBJECTIVE SYSTEM ----------
     [Header("Objective System (optional)")]
     public ObjectiveManager objectiveManager;
+
     [Tooltip("Exact description of the objective to complete when pressed.")]
     public string objectiveDescription;
+
     public bool completeObjectiveOnPress = true;
-    public bool onlyOnce = false; // optional: prevents completing the same objective multiple times
+    public bool onlyOnce = false;           // If true, mark that objective only once
     private bool _objectiveCompleted;
-    // === VR Rig (se moverá SOLO si está dentro de la PassengerZone) ===
-    [Header("VR Rig (condicional)")]
-    public Transform rigRoot;              // p.ej. "[BuildingBlock] Camera Rig"
-    public Transform centerEyeAnchor;      // p.ej. TrackingSpace/CenterEyeAnchor
-    public CharacterController rigCC;      // opcional
 
+    // VR Rig (moves only if inside the PassengerZone)
+    [Header("VR Rig (conditional)")]
+    public Transform rigRoot;               // e.g., "[BuildingBlock] Camera Rig"
+    public Transform centerEyeAnchor;       // e.g., TrackingSpace/CenterEyeAnchor
+    public CharacterController rigCC;       // optional
 
-    // --- static shared state por TARGET ---
+    // --- static shared state per target ---
     private class SharedAxisState
     {
         public Vector3 origin;
@@ -86,7 +91,6 @@ public class ButtonMovesObject : MonoBehaviour
 
     private static readonly Dictionary<Transform, SharedAxisState> s_shared = new();
 
-    // --- per-instance ---
     private Coroutine _moveRoutine;
     private Coroutine _holdRoutine;
     private Vector3 _btnRestLocalPos;
@@ -116,10 +120,11 @@ public class ButtonMovesObject : MonoBehaviour
     private Vector3 SharedOrigin => Shared.origin;
     private Collider _zoneCollider;
 
-    void Awake()
+    private void Awake()
     {
         if (passengerZone != null)
-        _zoneCollider = passengerZone.GetComponent<Collider>(); // Box/any collider (IsTrigger da igual)
+            _zoneCollider = passengerZone.GetComponent<Collider>();
+
         if (target == null)
         {
             Debug.LogError("[ButtonMovesObject] Please assign a target.");
@@ -127,7 +132,7 @@ public class ButtonMovesObject : MonoBehaviour
             return;
         }
 
-        // Shared origin
+        // Shared origin (per target)
         if (!Shared.originSet)
         {
             Shared.origin = (limitOrigin != null) ? limitOrigin.position : target.position;
@@ -138,7 +143,7 @@ public class ButtonMovesObject : MonoBehaviour
             Shared.origin = limitOrigin.position;
         }
 
-        // Shared axis
+        // Shared movement axis (per target)
         if (!Shared.axisSet)
         {
             Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
@@ -148,7 +153,7 @@ public class ButtonMovesObject : MonoBehaviour
             Shared.axisSet = true;
         }
 
-        // Sign relative to canonical
+        // Sign of this button’s direction relative to the shared canonical axis
         {
             Vector3 d = direction.sqrMagnitude < 1e-6f ? Vector3.right : direction.normalized;
             Vector3 axisWorld = (space == MovementSpace.Local) ? target.TransformDirection(d) : d;
@@ -157,7 +162,7 @@ public class ButtonMovesObject : MonoBehaviour
             if (_dirSignRelativeToCanonical == 0f) _dirSignRelativeToCanonical = 1f;
         }
 
-        // Button visuals
+        // Button visual positions (rest vs pressed)
         if (animateButtonSelf && buttonToTranslate != null)
         {
             _btnRestLocalPos = buttonToTranslate.localPosition;
@@ -170,6 +175,7 @@ public class ButtonMovesObject : MonoBehaviour
     }
 
     // ----------- Events -----------
+
     public void OnPress()
     {
         if (_isPressed) return;
@@ -179,9 +185,10 @@ public class ButtonMovesObject : MonoBehaviour
         _pressStamp = Time.time;
         _lastInputTime = Time.time;
 
-        if (animateButtonSelf) StartMoveButton(_btnPressedLocalPos);
+        if (animateButtonSelf)
+            StartMoveButton(_btnPressedLocalPos);
 
-        // --- OBJECTIVE ACTION ---
+        // objective completion
         TryCompleteObjective();
 
         if (pressMode == PressMode.Hold)
@@ -190,6 +197,7 @@ public class ButtonMovesObject : MonoBehaviour
             return;
         }
 
+        // One discrete step along the axis
         StepOnceRelative(distance * _dirSignRelativeToCanonical);
     }
 
@@ -204,14 +212,24 @@ public class ButtonMovesObject : MonoBehaviour
 
         if (pressMode == PressMode.Hold)
         {
-            if (_holdRoutine != null) { StopCoroutine(_holdRoutine); _holdRoutine = null; }
-            if (_moveRoutine != null) { StopCoroutine(_moveRoutine); _moveRoutine = null; }
+            if (_holdRoutine != null)
+            {
+                StopCoroutine(_holdRoutine);
+                _holdRoutine = null;
+            }
+            if (_moveRoutine != null)
+            {
+                StopCoroutine(_moveRoutine);
+                _moveRoutine = null;
+            }
         }
 
-        if (animateButtonSelf) StartMoveButton(_btnRestLocalPos);
+        if (animateButtonSelf)
+            StartMoveButton(_btnRestLocalPos);
     }
 
     // ----------- Objective Handling -----------
+
     private void TryCompleteObjective()
     {
         if (!completeObjectiveOnPress || objectiveManager == null) return;
@@ -219,17 +237,19 @@ public class ButtonMovesObject : MonoBehaviour
 
         _objectiveCompleted = true;
 
-        Debug.Log($"🎯 Objective triggered from button: {objectiveDescription}");
+        Debug.Log($"Objective triggered from button: {objectiveDescription}");
         objectiveManager.CompleteObjective(objectiveDescription);
         objectiveManager.PrintObjectivesStatus();
     }
 
     // ----------- Movement Logic -----------
+
     private void StepOnceRelative(float stepSigned)
     {
         Vector3 current = target.position;
         float curAlong = Vector3.Dot(current - SharedOrigin, CanonicalAxis);
         Vector3 ortho = (current - SharedOrigin) - CanonicalAxis * curAlong;
+
         float newAlong = curAlong + stepSigned;
 
         if (useAxisLimit)
@@ -253,7 +273,11 @@ public class ButtonMovesObject : MonoBehaviour
     {
         Vector3 start = target.position;
         float totalDist = Vector3.Distance(start, dest);
-        if (totalDist < 1e-4f) { _moveRoutine = null; yield break; }
+        if (totalDist < 1e-4f)
+        {
+            _moveRoutine = null;
+            yield break;
+        }
 
         float duration = Mathf.Max(0.0001f, totalDist / speed);
         float t = 0f;
@@ -270,7 +294,7 @@ public class ButtonMovesObject : MonoBehaviour
             if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
 
-            // 👇 NUEVO: mueve el rig solo si la cabeza está dentro de la zona
+            // Move rig only if the head is inside the passenger zone
             MoveRigByDeltaIfInside(delta);
 
             target.position = next;
@@ -285,7 +309,6 @@ public class ButtonMovesObject : MonoBehaviour
             if (passengerZone != null && movePassengersOnSnap && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
 
-            // 👇 NUEVO:
             MoveRigByDeltaIfInside(delta);
 
             target.position = final;
@@ -297,8 +320,16 @@ public class ButtonMovesObject : MonoBehaviour
     private void StartHold()
     {
         if (!allowInterrupt && (_moveRoutine != null || _holdRoutine != null)) return;
-        if (_moveRoutine != null) { StopCoroutine(_moveRoutine); _moveRoutine = null; }
-        if (_holdRoutine != null) StopCoroutine(_holdRoutine);
+
+        if (_moveRoutine != null)
+        {
+            StopCoroutine(_moveRoutine);
+            _moveRoutine = null;
+        }
+
+        if (_holdRoutine != null)
+            StopCoroutine(_holdRoutine);
+
         _holdRoutine = StartCoroutine(MoveTargetWhileHeld());
     }
 
@@ -326,7 +357,6 @@ public class ButtonMovesObject : MonoBehaviour
             if (passengerZone != null && delta.sqrMagnitude > 1e-12f)
                 passengerZone.ApplyDelta(delta);
 
-            // 👇 NUEVO:
             MoveRigByDeltaIfInside(delta);
 
             target.position = desired;
@@ -336,7 +366,8 @@ public class ButtonMovesObject : MonoBehaviour
         _holdRoutine = null;
     }
 
-    // --- BUTTON movement (visual) ---
+    // --- Button visual movement ---
+
     private void StartMoveButton(Vector3 destLocal)
     {
         if (buttonToTranslate == null) return;
@@ -349,7 +380,11 @@ public class ButtonMovesObject : MonoBehaviour
     {
         Vector3 start = buttonToTranslate.localPosition;
         float totalDist = Vector3.Distance(start, destLocal);
-        if (totalDist < 1e-5f) { _buttonRoutine = null; yield break; }
+        if (totalDist < 1e-5f)
+        {
+            _buttonRoutine = null;
+            yield break;
+        }
 
         float duration = Mathf.Max(0.0001f, totalDist / buttonSpeed);
         float t = 0f;
@@ -362,11 +397,14 @@ public class ButtonMovesObject : MonoBehaviour
             yield return null;
         }
 
-        if (buttonSnapExactlyAtEnd) buttonToTranslate.localPosition = destLocal;
+        if (buttonSnapExactlyAtEnd)
+            buttonToTranslate.localPosition = destLocal;
+
         _buttonRoutine = null;
     }
 
     // ----------- Utils -----------
+
     private Vector3 GetAxisDir()
     {
         switch (buttonAxis)
@@ -380,15 +418,16 @@ public class ButtonMovesObject : MonoBehaviour
                 return v.normalized;
         }
     }
-    private bool IsHeadInsideZone()
-{
-    if (_zoneCollider == null || centerEyeAnchor == null) return false;
 
-    // ClosestPoint: si el punto está dentro, devuelve el propio punto
-    Vector3 p = centerEyeAnchor.position;
-    Vector3 cp = _zoneCollider.ClosestPoint(p);
-    return (cp - p).sqrMagnitude <= 1e-8f;
-}
+    private bool IsHeadInsideZone()
+    {
+        if (_zoneCollider == null || centerEyeAnchor == null) return false;
+
+        // If the point is inside, ClosestPoint returns the same point
+        Vector3 p = centerEyeAnchor.position;
+        Vector3 cp = _zoneCollider.ClosestPoint(p);
+        return (cp - p).sqrMagnitude <= 1e-8f;
+    }
 
     private void MoveRigByDeltaIfInside(Vector3 delta)
     {
@@ -396,16 +435,16 @@ public class ButtonMovesObject : MonoBehaviour
         if (rigRoot == null) return;
         if (!IsHeadInsideZone()) return;
 
-        bool had = false;
+        bool hadCC = false;
         if (rigCC != null)
         {
-            had = rigCC.enabled;
-            rigCC.enabled = false; // evita empujones del CC al mover el rig
+            hadCC = rigCC.enabled;
+            rigCC.enabled = false; // avoid CharacterController pushing back when moving the rig
         }
 
         rigRoot.position += delta;
 
-        if (rigCC != null) rigCC.enabled = had;
+        if (rigCC != null)
+            rigCC.enabled = hadCC;
     }
-
 }

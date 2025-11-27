@@ -8,31 +8,30 @@ public class RoleProvider : MonoBehaviour
     public static RoleProvider Instance { get; private set; }
 
     [Header("Current Role")]
-    // Valor por defecto en el Inspector, pero se ignora hasta que hasRole sea true.
+    // Default inspector value. Ignored until hasRole becomes true.
     public Role role = Role.Patient;
     private bool hasRole = false;
 
-    [System.Serializable] 
+    [System.Serializable]
     public class RoleChangedEvent : UnityEvent<Role> {}
     public RoleChangedEvent OnRoleChanged;
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance != null && Instance != this) 
-        { 
-            Destroy(gameObject); 
-            return; 
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Persiste entre escenas
+        DontDestroyOnLoad(gameObject); // Persist across scenes
 
-        // Al iniciar, marcamos que todavía NO hay rol seleccionado por el usuario.
-        hasRole = false;
-        Debug.Log("[RoleProvider] Init with NO role selected yet.");
+        hasRole = false; // No role selected yet
+        Debug.Log("[RoleProvider] Initialized with no role selected.");
     }
 
-    // Estos métodos los usas desde los toggles (OnValueChanged)
+    // Called from UI toggles (OnValueChanged)
     public void SetRolePatient(bool isOn)
     {
         if (isOn) SetRole(Role.Patient, "UI Toggle Patient");
@@ -50,14 +49,15 @@ public class RoleProvider : MonoBehaviour
 
     public void SetRole(Role newRole, string source = "Code")
     {
-        // Si ya había rol Y el nuevo rol es el mismo, no hacemos nada.
-        if (hasRole && role == newRole) return;
+        // If a role was already set and the new role matches, nothing to update
+        if (hasRole && role == newRole)
+            return;
 
-        // Asignamos rol y marcamos que ya hay uno válido.
         role = newRole;
         hasRole = true;
 
-        Debug.Log($"[RoleProvider] Role change -> {role} (source: {source})\n{System.Environment.StackTrace}", this);
+        Debug.Log($"[RoleProvider] Role changed -> {role} (source: {source})\n{System.Environment.StackTrace}", this);
+
         OnRoleChanged?.Invoke(role);
     }
 }

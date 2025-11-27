@@ -6,16 +6,16 @@ public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance;
 
-    [Header("Referencia al proveedor de rol")]
+    [Header("Role provider reference")]
     public RoleProvider roleProvider;
 
-    [Header("Lista de objetivos")]
+    [Header("Objective list")]
     public List<Objective> objectives = new List<Objective>();
 
-    // EVENTO para avisar de que un objetivo se ha completado
+    // Event fired when an objective is completed
     public event Action<Objective> OnObjectiveCompleted;
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
     }
@@ -23,8 +23,8 @@ public class ObjectiveManager : MonoBehaviour
     public void CompleteObjective(string description)
     {
         Role currentRole = roleProvider.role;
-        Debug.Log($"[RoleProvider] Rol actual: {roleProvider.role}");
-        Debug.Log($"Intentando completar objetivo '{description}' para el rol {currentRole}");
+        Debug.Log($"[RoleProvider] Current role: {roleProvider.role}");
+        Debug.Log($"Trying to complete objective '{description}' for role {currentRole}");
 
         for (int i = 0; i < objectives.Count; i++)
         {
@@ -34,36 +34,39 @@ public class ObjectiveManager : MonoBehaviour
                 if (!obj.isCompleted)
                 {
                     obj.isCompleted = true;
-                    Debug.Log($"✅ Objetivo completado: '{obj.description}' (rol: {obj.role}, puntos: {obj.points})");
+                    Debug.Log(
+                        $"Objective completed: '{obj.description}' " +
+                        $"(role: {obj.role}, points: {obj.points})"
+                    );
 
-                    // Llamamos al evento
+                    // Fire event
                     OnObjectiveCompleted?.Invoke(obj);
                 }
                 else
                 {
-                    Debug.Log($"ℹ️ Objetivo '{obj.description}' ya estaba completado.");
+                    Debug.Log($"Objective '{obj.description}' was already completed.");
                 }
                 return;
             }
         }
 
-        Debug.LogWarning($"❌ No se encontró el objetivo '{description}' para el rol {currentRole}.");
+        Debug.LogWarning($"Objective '{description}' was not found for role {currentRole}.");
     }
 
     public void PrintObjectivesStatus()
     {
-        Debug.Log("---- ESTADO DE LOS OBJETIVOS ----");
+        Debug.Log("---- OBJECTIVES STATUS ----");
         foreach (var obj in objectives)
         {
             Debug.Log(
                 $"{obj.description} ({obj.role}) -> " +
-                $"{(obj.isCompleted ? "✔️ COMPLETADO" : "❌ PENDIENTE")} | " +
-                $"Puntos: {obj.points}"
+                $"{(obj.isCompleted ? "COMPLETED" : "PENDING")} | " +
+                $"Points: {obj.points}"
             );
         }
     }
 
-    // Puntuación obtenida (solo objetivos completados)
+    // Score obtained (only completed objectives)
     public int GetFinalScore()
     {
         int score = 0;
@@ -75,7 +78,7 @@ public class ObjectiveManager : MonoBehaviour
         return score;
     }
 
-    // Puntuación máxima posible (todos los objetivos)
+    // Maximum possible score (all objectives)
     public int GetMaxScore()
     {
         int total = 0;

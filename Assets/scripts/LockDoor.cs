@@ -6,28 +6,31 @@ public class LockDoorTransform : MonoBehaviour
     private Quaternion lockedRotation;
     private bool isLocked = false;
 
-    public void Start()
+    private void Start()
     {
         Lock();
-        Debug.Log("---- PÙERTA BLOQUEADA --------");
+        Debug.Log("Door locked on start.");
     }
 
     public void Lock()
     {
+        // Store the current transform as the locked pose
         lockedPosition = transform.position;
         lockedRotation = transform.rotation;
         isLocked = true;
-        Debug.Log("🚪 Puerta bloqueada");
+
+        Debug.Log("Door locked");
     }
 
     public void Unlock()
     {
         isLocked = false;
-        Debug.Log("🔓 Puerta desbloqueada");
+        Debug.Log("Door unlocked");
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
+        // If locked, force the door back to its stored transform
         if (isLocked)
         {
             transform.position = lockedPosition;
@@ -35,9 +38,9 @@ public class LockDoorTransform : MonoBehaviour
         }
     }
 
+    // Returns true if the door is close enough to the saved locked rotation
     public bool IsAtLockedPosition(float tolerance = 0.01f)
     {
-        //Debug.Log("---------------- COMPROBANDO ANGULOS -----------------" + transform.rotation + " " + lockedRotation + "-" + Quaternion.Angle(transform.rotation, lockedRotation)+ "-"+tolerance);
-         return Quaternion.Angle(transform.rotation, lockedRotation) <= tolerance;
+        return Quaternion.Angle(transform.rotation, lockedRotation) <= tolerance;
     }
 }
