@@ -12,80 +12,106 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Objective list")]
     public List<Objective> objectives = new List<Objective>();
 
-    // Event fired when an objective is completed
     public event Action<Objective> OnObjectiveCompleted;
+    // Evento extra para avisar a la UI de que actualice la lista cuando cambiamos el caso
+    public event Action OnObjectivesListUpdated; 
 
     private void Awake()
     {
         Instance = this;
     }
 
+    // Método para activar/desactivar objetivos según su nombre
+    public void SetObjectiveStatus(string exactDescription, bool isActive)
+    {
+        // Buscamos ignorando mayúsculas/minúsculas para evitar errores tontos
+        Objective obj = objectives.Find(o => o.description.Equals(exactDescription, StringComparison.OrdinalIgnoreCase));
+        
+        if (obj != null)
+        {
+            obj.isActive = isActive;
+            obj.isCompleted = false; // Reiniciamos por si acaso
+        }
+        else
+        {
+            Debug.LogWarning($"[ObjectiveManager] No se encontró el objetivo: {exactDescription}");
+        }
+    }
+
+    // Método para refrescar la UI después de generar el caso
+    public void RefreshObjectives()
+    {
+        OnObjectivesListUpdated?.Invoke();
+    }
+
     public void CompleteObjective(string description)
     {
         Role currentRole = roleProvider.role;
-        Debug.Log($"[RoleProvider] Current role: {roleProvider.role}");
-        Debug.Log($"Trying to complete objective '{description}' for role {currentRole}");
 
-        for (int i = 0; i < objectives.Count; i++)
+        // Buscamos el objetivo que coincida Y que esté ACTIVO
+        Objective obj = objectives.Find(o => o.description == description && o.role == currentRole);
+
+        if (obj != null)
         {
-            Objective obj = objectives[i];
-            if (obj.description == description && obj.role == currentRole)
+            // SI EL OBJETIVO NO ESTÁ ACTIVO EN ESTE CASO, LO IGNORAMOS
+            if (!obj.isActive) 
             {
-                if (!obj.isCompleted)
-                {
-                    obj.isCompleted = true;
-                    Debug.Log(
-                        $"Objective completed: '{obj.description}' " +
-                        $"(role: {obj.role}, points: {obj.points})"
-                    );
+                Debug.Log($"El objetivo '{description}' existe pero no está activo en este caso clínico.");
+                return; 
+            }
 
-                    // Fire event
-                    OnObjectiveCompleted?.Invoke(obj);
-                }
-                else
-                {
-                    Debug.Log($"Objective '{obj.description}' was already completed.");
-                }
-                return;
+            if (!obj.isCompleted)
+            {
+                obj.isCompleted = true;
+                Debug.Log($"Objective completed: '{obj.description}'");
+                OnObjectiveCompleted?.Invoke(obj);
             }
         }
-
-        Debug.LogWarning($"Objective '{description}' was not found for role {currentRole}.");
-    }
-
-    public void PrintObjectivesStatus()
-    {
-        Debug.Log("---- OBJECTIVES STATUS ----");
-        foreach (var obj in objectives)
+        else
         {
-            Debug.Log(
-                $"{obj.description} ({obj.role}) -> " +
-                $"{(obj.isCompleted ? "COMPLETED" : "PENDING")} | " +
-                $"Points: {obj.points}"
-            );
+            Debug.LogWarning($"Objective '{description}' not found for role {currentRole}.");
         }
     }
 
-    // Score obtained (only completed objectives)
-    public int GetFinalScore()
-    {
-        int score = 0;
-        foreach (var obj in objectives)
-        {
-            if (obj.isCompleted)
-                score += obj.points;
-        }
-        return score;
-    }
-
-    // Maximum possible score (all objectives)
+    // Calcula puntuación máxima SOLO de los objetivos activos
     public int GetMaxScore()
     {
         int total = 0;
         foreach (var obj in objectives)
         {
-            total += obj.points;
+            if (obj.isActive) total += obj.points;
         }
         return total;
+    }
+
+    // Calcula puntuación actual
+    public int GetFinalScore()
+    {
+        int score = 0;
+        foreach (var obj in objectives)
+        {
+            // Solo sumamos si está completado (y por ende estaba activo)
+            if (obj.isCompleted && obj.isActive) 
+                score += obj.points;
+        }
+        return score;
+    }
+
+    public void PrintObjectivesStatus()
+    {
+        Debug.Log("---- ESTADO DEL CASO CLÍNICO ----");
+        foreach (var obj in objectives)
+        {
+            if (obj.isActive)
+            {
+                string estado = obj.isCompleted ? "<color=green>COMPLETADO</color>" : "<color=red>PENDIENTE</color>";
+                Debug.Log($"[ACTIVO] {obj.description} -> {estado}");
+            }
+            else
+            {
+                Debug.Log($"<color=grey>[INACTIVO] {obj.description} (No requerido en este caso)</color>");
+            }
+        }
+        Debug.Log("----------------------------------");
     }
 }
