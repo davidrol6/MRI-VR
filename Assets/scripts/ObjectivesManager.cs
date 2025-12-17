@@ -13,7 +13,6 @@ public class ObjectiveManager : MonoBehaviour
     public List<Objective> objectives = new List<Objective>();
 
     public event Action<Objective> OnObjectiveCompleted;
-    // Evento extra para avisar a la UI de que actualice la lista cuando cambiamos el caso
     public event Action OnObjectivesListUpdated; 
 
     private void Awake()
@@ -21,16 +20,14 @@ public class ObjectiveManager : MonoBehaviour
         Instance = this;
     }
 
-    // Método para activar/desactivar objetivos según su nombre
     public void SetObjectiveStatus(string exactDescription, bool isActive)
     {
-        // Buscamos ignorando mayúsculas/minúsculas para evitar errores tontos
         Objective obj = objectives.Find(o => o.description.Equals(exactDescription, StringComparison.OrdinalIgnoreCase));
         
         if (obj != null)
         {
             obj.isActive = isActive;
-            obj.isCompleted = false; // Reiniciamos por si acaso
+            obj.isCompleted = false; 
         }
         else
         {
@@ -38,7 +35,6 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
-    // Método para refrescar la UI después de generar el caso
     public void RefreshObjectives()
     {
         OnObjectivesListUpdated?.Invoke();
@@ -48,12 +44,10 @@ public class ObjectiveManager : MonoBehaviour
     {
         Role currentRole = roleProvider.role;
 
-        // Buscamos el objetivo que coincida Y que esté ACTIVO
         Objective obj = objectives.Find(o => o.description == description && o.role == currentRole);
 
         if (obj != null)
         {
-            // SI EL OBJETIVO NO ESTÁ ACTIVO EN ESTE CASO, LO IGNORAMOS
             if (!obj.isActive) 
             {
                 Debug.Log($"El objetivo '{description}' existe pero no está activo en este caso clínico.");
@@ -73,7 +67,6 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
-    // Calcula puntuación máxima SOLO de los objetivos activos
     public int GetMaxScore()
     {
         int total = 0;
@@ -84,13 +77,11 @@ public class ObjectiveManager : MonoBehaviour
         return total;
     }
 
-    // Calcula puntuación actual
     public int GetFinalScore()
     {
         int score = 0;
         foreach (var obj in objectives)
         {
-            // Solo sumamos si está completado (y por ende estaba activo)
             if (obj.isCompleted && obj.isActive) 
                 score += obj.points;
         }

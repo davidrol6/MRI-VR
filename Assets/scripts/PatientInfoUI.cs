@@ -3,7 +3,7 @@ using TMPro;
 
 public class PatientInfoUI : MonoBehaviour
 {
-    [Header("Referencias UI")]
+    [Header("References of UI")]
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dobText;
     public TextMeshProUGUI ageText;

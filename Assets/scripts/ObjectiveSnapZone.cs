@@ -37,14 +37,12 @@ public class DropInZoneObjective : MonoBehaviour
     {
         if (onlyOnce && hasSnapped) return;
         if (targetZone == null || snapPoint == null) return;
-        if (grabEvents == null) return;  // we need grab state
+        if (grabEvents == null) return;  
 
         bool grabbedNow = grabEvents.IsGrabbed;
 
-        // Transition: was grabbed last frame and now is not → just released
         if (wasGrabbedLastFrame && !grabbedNow)
         {
-            // On the frame of release, check if it's inside the zone
             if (IsInsideZone())
             {
                 Debug.Log($"{name} was released inside zone {targetZone.name}. Snapping to point.");
@@ -72,20 +70,16 @@ public class DropInZoneObjective : MonoBehaviour
     {
         Debug.Log($"SnapToPoint: moving {name} to {snapPoint.position} / rot {snapPoint.rotation.eulerAngles}");
 
-        // Place object exactly at the defined point
         transform.position = snapPoint.position;
         transform.rotation = snapPoint.rotation;
 
-        // Stop physics
         if (rb != null)
         {
-            rb.linearVelocity = Vector3.zero;   // Unity 6
+            rb.linearVelocity = Vector3.zero;  
             rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;             // keep it fixed
+            rb.isKinematic = true;            
         }
 
-        // If you ever want to use 'disableGrabbableOnSnap', 
-        // this is the place to disable grab components.
     }
 
     private void CompleteObjective()
