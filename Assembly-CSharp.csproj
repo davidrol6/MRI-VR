@@ -72,6 +72,7 @@
     <Compile Include="Assets\scripts\DoorUnlockByKn.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Intercept Feature\InterceptCreateSessionFeature.cs" />
     <Compile Include="Assets\Samples\OpenXR Plugin\1.14.3\Controller XRInput\Scripts\ActionToVector2SliderXRInput.cs" />
+    <Compile Include="Assets\scripts\VideoTutorialController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />

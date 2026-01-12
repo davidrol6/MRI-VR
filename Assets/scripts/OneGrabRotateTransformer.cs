@@ -1,21 +1,11 @@
-/*
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- * All rights reserved.
- *
- * Licensed under the Oculus SDK License Agreement (the "License");
- * you may not use the Oculus SDK except in compliance with the License,
- * which is provided at the time of installation or download, or which
- * otherwise accompanies this software in either electronic or hard copy form.
- *
- * You may obtain a copy of the License at
- *
- * https://developer.oculus.com/licenses/oculussdk/
- *
- * Unless required by applicable law or agreed to in writing, the Oculus SDK
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/* * SCRIPT SUMMARY:
+ * This script is a component of the Meta Interaction SDK that defines how an object rotates when grabbed with one hand.
+ * * * How it works:
+ * - It implements the ITransformer interface to handle the math of moving/rotating an object during a grab.
+ * - It defines a Pivot Point and a Rotation Axis (e.g., rotating a door around its hinge).
+ * - On 'BeginTransform', it calculates the initial angle of the hand relative to the pivot.
+ * - On 'UpdateTransform', it tracks the hand's movement around the axis and applies the corresponding rotation to the object.
+ * - It supports angular constraints (Min/Max limits) to prevent objects from rotating too far (e.g., a lever that stops at 90 degrees).
  */
 
 using System;
@@ -38,21 +28,15 @@ namespace Oculus.Interaction
         }
 
         [SerializeField, Optional]
-        private Transform _pivotTransform = null;
+        private Transform _pivotTransform = null; // The center point of rotation (e.g., the hinge)
 
         public Transform Pivot => _pivotTransform != null ? _pivotTransform : transform;
 
         [SerializeField]
-        private Axis _rotationAxis = Axis.Up;
+        private Axis _rotationAxis = Axis.Up; // Which local axis to rotate around
 
-        /// <summary>
-        /// The axis that this transformer will rotate around.
-        /// </summary>
         public Axis RotationAxis => _rotationAxis;
 
-        /// <summary>
-        /// Constraints that determine the minimum and maximum rotation angle for this transormer.
-        /// </summary>
         [Serializable]
         public class OneGrabRotateConstraints
         {
@@ -68,9 +52,6 @@ namespace Oculus.Interaction
                 MaxAngle = new FloatConstraint()
             };
 
-        /// <summary>
-        /// The current <see cref="OneGrabRotateConstraints"/> that are being used by this instance.
-        /// </summary>
         public OneGrabRotateConstraints Constraints
         {
             get
@@ -84,6 +65,7 @@ namespace Oculus.Interaction
             }
         }
 
+        // Internal state tracking for rotation logic
         private float _relativeAngle = 0.0f;
         private float _constrainedRelativeAngle = 0.0f;
 
@@ -99,8 +81,8 @@ namespace Oculus.Interaction
 
 
         /// <summary>
-        /// Implementation of <see cref="ITransformer.Initialize"/>; for details, please refer to the related documentation
-        /// provided for that interface.
+        /// Implementation of <see cref="ITransformer.Initialize"/>
+        /// Called by the Grabbable component when the script starts.
         /// </summary>
         public void Initialize(IGrabbable grabbable)
         {
@@ -110,7 +92,6 @@ namespace Oculus.Interaction
         /// <summary>
         /// Computes the pose of the rotational pivot, in world space.
         /// </summary>
-        /// <returns>The world space pose of the rotational pivot.</returns>
         public Pose ComputeWorldPivotPose()
         {
             if (_pivotTransform != null)
@@ -118,6 +99,7 @@ namespace Oculus.Interaction
                 return _pivotTransform.GetPose();
             }
 
+            // If no specific pivot is assigned, calculate one based on the object's current transform
             var targetTransform = _grabbable.Transform;
 
             Vector3 worldPosition = targetTransform.position;
@@ -129,12 +111,12 @@ namespace Oculus.Interaction
         }
 
         /// <summary>
-        /// Implementation of <see cref="ITransformer.BeginTransform"/>; for details, please refer to the related documentation
-        /// provided for that interface.
+        /// Implementation of <see cref="ITransformer.BeginTransform"/>
+        /// Called once when the user first grabs the object.
         /// </summary>
         public void BeginTransform()
         {
-            var grabPoint = _grabbable.GrabPoints[0];
+            var grabPoint = _grabbable.GrabPoints[0]; // The position of the hand/controller
             var targetTransform = _grabbable.Transform;
 
             if (_pivotTransform == null)
@@ -142,6 +124,7 @@ namespace Oculus.Interaction
                 _localRotation = targetTransform.localRotation;
             }
 
+            // Determine the rotation axis vector in local space
             Vector3 localAxis = Vector3.zero;
             localAxis[(int)_rotationAxis] = 1f;
 
@@ -151,7 +134,8 @@ namespace Oculus.Interaction
             Quaternion inverseRotation = Quaternion.Inverse(_worldPivotPose.rotation);
 
             Vector3 grabDelta = grabPoint.position - _worldPivotPose.position;
-            // The initial delta must be non-zero between the pivot and grab location for rotation
+            
+            // Handle edge case where grab point is exactly at the pivot (avoid divide by zero)
             if (Mathf.Abs(grabDelta.magnitude) < 0.001f)
             {
                 Vector3 localAxisNext = Vector3.zero;
@@ -159,8 +143,7 @@ namespace Oculus.Interaction
                 grabDelta = _worldPivotPose.rotation * localAxisNext;
             }
 
-            _grabPositionInPivotSpace =
-                inverseRotation * grabDelta;
+            _grabPositionInPivotSpace = inverseRotation * grabDelta;
 
             Vector3 worldPositionDelta =
                 inverseRotation * (targetTransform.position - _worldPivotPose.position);
@@ -168,6 +151,7 @@ namespace Oculus.Interaction
             Quaternion worldRotationDelta = inverseRotation * targetTransform.rotation;
             _transformPoseInPivotSpace = new Pose(worldPositionDelta, worldRotationDelta);
 
+            // Project the grab vector onto the rotation plane to measure angles
             Vector3 initialOffset = _worldPivotPose.rotation * _grabPositionInPivotSpace;
             Vector3 initialVector = Vector3.ProjectOnPlane(initialOffset, rotationAxis);
             _previousVectorInPivotSpace = Quaternion.Inverse(_worldPivotPose.rotation) * initialVector;
@@ -180,8 +164,8 @@ namespace Oculus.Interaction
         }
 
         /// <summary>
-        /// Implementation of <see cref="ITransformer.UpdateTransform"/>; for details, please refer to the related documentation
-        /// provided for that interface.
+        /// Implementation of <see cref="ITransformer.UpdateTransform"/>
+        /// Called every frame while the object is being held.
         /// </summary>
         public void UpdateTransform()
         {
@@ -193,21 +177,23 @@ namespace Oculus.Interaction
             _worldPivotPose = ComputeWorldPivotPose();
             Vector3 rotationAxis = _worldPivotPose.rotation * localAxis;
 
-            // Project our positional offsets onto a plane with normal equal to the rotation axis
+            // Project current hand position onto the rotation plane
             Vector3 targetOffset = grabPoint.position - _worldPivotPose.position;
             Vector3 targetVector = Vector3.ProjectOnPlane(targetOffset, rotationAxis);
 
             Vector3 previousVectorInWorldSpace =
                 _worldPivotPose.rotation * _previousVectorInPivotSpace;
 
-            // update previous
+            // Update stored vector for the next frame
             _previousVectorInPivotSpace = Quaternion.Inverse(_worldPivotPose.rotation) * targetVector;
 
+            // Calculate the angle difference between last frame and this frame
             float signedAngle =
                 Vector3.SignedAngle(previousVectorInWorldSpace, targetVector, rotationAxis);
 
             _relativeAngle += signedAngle;
 
+            // Apply Constraints (Min/Max Angle)
             _constrainedRelativeAngle = _relativeAngle;
             if (Constraints.MinAngle.Constrain)
             {
@@ -218,6 +204,7 @@ namespace Oculus.Interaction
                 _constrainedRelativeAngle = Mathf.Min(_constrainedRelativeAngle, Constraints.MaxAngle.Value);
             }
 
+            // Apply the final rotation to the object
             Quaternion deltaRotation = Quaternion.AngleAxis(_constrainedRelativeAngle - _startAngle, rotationAxis);
 
             float parentScale = targetTransform.parent != null ? targetTransform.parent.lossyScale.x : 1f;
@@ -234,17 +221,15 @@ namespace Oculus.Interaction
             targetTransform.rotation = transformDeltaRotated.rotation;
         }
 
-        /// <summary>
-        /// Implementation of <see cref="ITransformer.EndTransform"/>; for details, please refer to the related documentation
-        /// provided for that interface.
-        /// </summary>
-        public void EndTransform() {
+        public void EndTransform() 
+        {
+            // Standard implementation typically empty unless cleanup is needed
+        }
 
-
-         }
-
-        public void ResetTransform(){
-            Debug.Log("EndTransform");
+        // Custom method to forcibly reset the rotation to zero/neutral
+        public void ResetTransform()
+        {
+            Debug.Log("ResetTransform");
 
             var targetTransform = _grabbable.Transform;
 
@@ -253,10 +238,10 @@ namespace Oculus.Interaction
             _worldPivotPose = ComputeWorldPivotPose();
             Vector3 rotationAxis = _worldPivotPose.rotation * localAxis;
 
-            // update previous
+            // Reset vectors
             _previousVectorInPivotSpace = new Vector3(0f, 0f, 1f);
 
-            //Quaternion deltaRotation = Quaternion.AngleAxis(_constrainedRelativeAngle - _startAngle, rotationAxis);
+            // Force rotation to zero
             Quaternion deltaRotation = Quaternion.AngleAxis(0f, rotationAxis);
 
             float parentScale = 1f;
@@ -269,41 +254,29 @@ namespace Oculus.Interaction
                 deltaRotation * transformDeltaInWorldSpace.position,
                 deltaRotation * transformDeltaInWorldSpace.rotation);
 
+            // Apply the reset transform
             targetTransform.position = _worldPivotPose.position + transformDeltaRotated.position;
             targetTransform.rotation = transformDeltaRotated.rotation;
+            
+            // Reset state variables
             _relativeAngle = 0.0f;
             _constrainedRelativeAngle = 0.0f;
         }
+
         #region Inject
 
-        /// <summary>
-        /// Injects all required dependencies for a dynamically instantiated
-        /// <see cref="OneGrabRotateTransformer"/>.
-        /// This method exists to support Interaction SDK's dependency injection pattern and is not
-        /// needed for typical Unity Editor-based usage.
-        /// </summary>
+        // Dependency injection methods used by the Oculus Interaction SDK
+
         public void InjectOptionalPivotTransform(Transform pivotTransform)
         {
             _pivotTransform = pivotTransform;
         }
 
-        /// <summary>
-        /// Sets the underlying optional rotational <see cref="Axis"/> for a dynamically instantiated
-        /// <see cref="OneGrabRotateTransformer"/>.
-        /// This method exists to support Interaction SDK's dependency injection pattern and is not
-        /// needed for typical Unity Editor-based usage.
-        /// </summary>
         public void InjectOptionalRotationAxis(Axis rotationAxis)
         {
             _rotationAxis = rotationAxis;
         }
 
-        /// <summary>
-        /// Sets the underlying <see cref="OneGrabRotateConstraints"/> for a dynamically instantiated
-        /// <see cref="OneGrabRotateTransformer"/>.
-        /// This method exists to support Interaction SDK's dependency injection pattern and is not
-        /// needed for typical Unity Editor-based usage.
-        /// </summary>
         public void InjectOptionalConstraints(OneGrabRotateConstraints constraints)
         {
             _constraints = constraints;

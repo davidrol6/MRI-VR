@@ -1,3 +1,12 @@
+/* * SCRIPT SUMMARY:
+ * This script detects when a specific object enters a defined 3D zone (Trigger Collider).
+ * * * How it works:
+ * - It relies on Unity's physics engine (OnTriggerEnter) to detect collisions.
+ * - It filters the entering object based on a Tag or a specific Transform reference.
+ * - Upon a valid entry, it marks a specific objective as complete in the ObjectiveManager.
+ * - It optionally triggers visual changes (Texture, Material, or Emission updates) on target objects to provide visual feedback.
+ */
+
 using UnityEngine;
 
 public class AreaObjectiveTrigger : MonoBehaviour
@@ -47,7 +56,7 @@ public class AreaObjectiveTrigger : MonoBehaviour
 
     private void Reset()
     {
-        // Try to automatically assign the collider on this GameObject
+        // Try to automatically assign the collider on this GameObject when added in Editor
         triggerZone = GetComponent<Collider>();
         if (triggerZone != null)
         {
@@ -57,7 +66,7 @@ public class AreaObjectiveTrigger : MonoBehaviour
 
     private void Awake()
     {
-        // Make sure we have a trigger collider
+        // Safety Check: Make sure we have a trigger collider to detect entry
         if (triggerZone == null)
         {
             triggerZone = GetComponent<Collider>();
@@ -80,21 +89,22 @@ public class AreaObjectiveTrigger : MonoBehaviour
         }
     }
 
+    // Logic triggered by the physics engine when another collider enters this zone
     private void OnTriggerEnter(Collider other)
     {
         if (onlyOnce && objectiveCompleted) return;
         if (triggerZone == null) return;
 
-        // 1) tag filter
+        // 1) Tag filter: If a tag is specified, ensure the entering object matches it
         if (!string.IsNullOrEmpty(requiredTag) && !other.CompareTag(requiredTag))
         {
             return;
         }
 
-        // 2) specific object filter
+        // 2) Specific object filter: If a specific object is required
         if (requiredObject != null)
         {
-            // Accept either the exact object or something in its hierarchy
+            // Accept either the exact object or something in its hierarchy (e.g., a child collider of the player)
             if (other.transform != requiredObject && other.transform.root != requiredObject)
             {
                 return;
@@ -105,15 +115,13 @@ public class AreaObjectiveTrigger : MonoBehaviour
         CompleteObjectiveAndVisuals();
     }
 
-
     /// Marks the objective as completed and applies visual changes.
-
     private void CompleteObjectiveAndVisuals()
     {
         if (objectiveCompleted && onlyOnce) return;
         objectiveCompleted = true;
 
-        // Notify ObjectiveManager
+        // Notify ObjectiveManager to update game state
         if (objectiveManager != null && !string.IsNullOrEmpty(objectiveDescription))
         {
             objectiveManager.CompleteObjective(objectiveDescription);
@@ -132,27 +140,27 @@ public class AreaObjectiveTrigger : MonoBehaviour
         {
             if (rend == null) continue;
 
-            // rend.material returns an instanced material for this renderer
+            // rend.material returns an instanced material for this renderer (modifying it won't affect assets)
             Material mat = rend.material;
 
-            // Replace whole material
+            // Option A: Replace whole material
             if (changeMaterial && materialOnComplete != null)
             {
                 mat = materialOnComplete;
                 rend.material = mat;
             }
 
-            // Change main texture (albedo / base map)
+            // Option B: Change main texture (Albedo / Base Map)
             if (changeMainTexture && mainTextureOnComplete != null && mat != null)
             {
-                // URP and Standard commonly use "_BaseMap" or "_MainTex"
+                // Checks for both Universal Render Pipeline (URP) and Standard Shader naming conventions
                 if (mat.HasProperty("_BaseMap"))
                     mat.SetTexture("_BaseMap", mainTextureOnComplete);
                 else if (mat.HasProperty("_MainTex"))
                     mat.SetTexture("_MainTex", mainTextureOnComplete);
             }
 
-            // Change normal map
+            // Option C: Change normal map
             if (changeNormalMap && normalMapOnComplete != null && mat != null)
             {
                 if (mat.HasProperty("_BumpMap"))
@@ -162,7 +170,7 @@ public class AreaObjectiveTrigger : MonoBehaviour
                 }
             }
 
-            // Change / enable emission
+            // Option D: Change / enable emission (Glow)
             if (changeEmission && mat != null)
             {
                 if (emissionMapOnComplete != null && mat.HasProperty("_EmissionMap"))

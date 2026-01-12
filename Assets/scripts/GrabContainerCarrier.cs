@@ -1,19 +1,23 @@
+/* * SCRIPT SUMMARY:
+ * This script enables a container (like a box, tray, or cart) to carry physical objects placed inside it.
+ * * * How it works:
+ * - It uses a Trigger Collider to define the "inside" volume of the container.
+ * - When an object enters, it is registered and "carried" using one of two methods:
+ * 1. PhysicsFollow: The object's Rigidbody is kinematically moved to stay relative to the container (preserves physics, avoids scaling issues).
+ * 2. ParentToNeutral: The object is temporarily parented to the container (simpler hierarchy, but sensitive to non-uniform scaling).
+ * - It optionally disables collisions between the item and the container walls to prevent physics jitter/explosions.
+ * - When the object is removed or the player grabs it, the script restores its original state.
+ */
+
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Lets a container carry rigidbodies placed inside its trigger.
-/// Two options:
-///  - ParentToNeutral: items are parented to a neutral child transform.
-///  - PhysicsFollow: no parenting; items follow the container using Rigidbody.MovePosition/MoveRotation.
-/// Optionally ignores collisions with the container while items are inside.
-/// </summary>
 public class GrabContainerCarrier : MonoBehaviour
 {
     public enum CarryMode { PhysicsFollow, ParentToNeutral }
 
     [Header("Mode")]
-    public CarryMode mode = CarryMode.PhysicsFollow;
+    public CarryMode mode = CarryMode.PhysicsFollow; // Determines how items stick to the container
 
     [Header("Volume (Trigger)")]
     [Tooltip("Collider marked as IsTrigger that defines the interior of the box.")]
@@ -24,33 +28,36 @@ public class GrabContainerCarrier : MonoBehaviour
     public Transform neutralParent;
 
     [Header("Filters (optional)")]
-    public LayerMask itemLayers = ~0;
-    public List<string> allowedTags = new();
+    public LayerMask itemLayers = ~0;       // Filter which layers can be carried
+    public List<string> allowedTags = new(); // Filter which tags can be carried
 
     [Header("Collisions")]
     [Tooltip("Ignore collisions between the item and the container while inside.")]
-    public bool ignoreItemVsContainerColliders = true;
+    public bool ignoreItemVsContainerColliders = true; // Essential to prevent physics glitches
 
+    // Internal tracking
     private readonly HashSet<Collider> _containerColliders = new();
     private readonly Dictionary<Rigidbody, CarryInfo> _inside = new();
 
+    // Helper class to store the original state of an object before it was picked up by the container
     private class CarryInfo
     {
         public Transform originalParent;
-        public Vector3 localOffset;      // PhysicsFollow
-        public Quaternion localRotation; // PhysicsFollow
-        public ItemGrabEvents grab;      // optional (to check if item is grabbed)
+        public Vector3 localOffset;      // Used for PhysicsFollow
+        public Quaternion localRotation; // Used for PhysicsFollow
+        public ItemGrabEvents grab;      // Optional reference to check if the player is currently holding it
     }
 
     private void Reset()
     {
-        // Try to auto-assign a trigger collider from children
+        // specific logic to auto-assign a trigger collider from children if available
         if (containerTrigger == null)
             containerTrigger = GetComponentInChildren<Collider>();
     }
 
     private void Awake()
     {
+        // 1. Validation: Ensure the trigger exists and is configured correctly
         if (containerTrigger == null)
         {
             Debug.LogError("[GrabContainerCarrier] Assign 'containerTrigger' (IsTrigger).");
@@ -63,18 +70,19 @@ public class GrabContainerCarrier : MonoBehaviour
             containerTrigger.isTrigger = true;
         }
 
-        // Cache all colliders that belong to the container (except the trigger)
+        // 2. Cache physical colliders of the container (to ignore collisions with them later)
         foreach (var col in GetComponentsInChildren<Collider>())
         {
             if (col != containerTrigger)
                 _containerColliders.Add(col);
         }
 
+        // 3. Setup for Parent mode
         if (mode == CarryMode.ParentToNeutral)
         {
             if (neutralParent == null)
             {
-                // Auto-create a neutral child if missing
+                // Auto-create a neutral child if missing to ensure clean scaling
                 var go = new GameObject("_CargoRoot (neutral)");
                 neutralParent = go.transform;
                 neutralParent.SetParent(transform, false);
@@ -85,7 +93,7 @@ public class GrabContainerCarrier : MonoBehaviour
             }
             else
             {
-                // Neutral parent should be clean to avoid weird scaling
+                // Ensure the user-assigned parent is clean
                 if (neutralParent.localScale != Vector3.one || neutralParent.localRotation != Quaternion.identity)
                 {
                     Debug.LogWarning("[GrabContainerCarrier] 'neutralParent' should have localScale (1,1,1) and identity rotation.");
@@ -93,7 +101,7 @@ public class GrabContainerCarrier : MonoBehaviour
             }
         }
 
-        // Warn if the container has non-uniform world scale (can cause shear with parenting)
+        // 4. Warn if the container has non-uniform world scale (can cause shear/distortion with parenting)
         var s = transform.lossyScale;
         if (!Mathf.Approximately(s.x, s.y) || !Mathf.Approximately(s.y, s.z))
         {
@@ -107,11 +115,14 @@ public class GrabContainerCarrier : MonoBehaviour
 
         var rb = other.attachedRigidbody;
         if (rb == null) return;
+        
+        // Check filters
         if (!IsInLayerMask(rb.gameObject.layer, itemLayers)) return;
         if (!PassesTagFilter(rb.gameObject)) return;
 
-        if (_inside.ContainsKey(rb)) return; // already tracked
+        if (_inside.ContainsKey(rb)) return; // Object is already tracked
 
+        // Create tracking info
         var info = new CarryInfo
         {
             originalParent = rb.transform.parent,
@@ -119,9 +130,11 @@ public class GrabContainerCarrier : MonoBehaviour
         };
         _inside[rb] = info;
 
+        // Disable physical collision to stop jitter
         if (ignoreItemVsContainerColliders)
             ToggleIgnoreCollisions(rb, true);
 
+        // Apply carrying logic
         if (mode == CarryMode.ParentToNeutral)
         {
             // Parent under neutral child (or container itself if neutral is missing)
@@ -129,7 +142,7 @@ public class GrabContainerCarrier : MonoBehaviour
         }
         else // PhysicsFollow
         {
-            // Store pose relative to the container at entry time
+            // Calculate and store the object's position relative to the container at the moment of entry
             info.localOffset   = transform.InverseTransformPoint(rb.position);
             info.localRotation = Quaternion.Inverse(transform.rotation) * rb.rotation;
         }
@@ -144,12 +157,13 @@ public class GrabContainerCarrier : MonoBehaviour
 
         if (_inside.TryGetValue(rb, out var info))
         {
-            // Restore original parent if we had parented it
+            // Restore original parent if we had changed it
             if (mode == CarryMode.ParentToNeutral)
             {
                 rb.transform.SetParent(info.originalParent, true);
             }
 
+            // Re-enable collisions
             if (ignoreItemVsContainerColliders)
                 ToggleIgnoreCollisions(rb, false);
 
@@ -170,14 +184,14 @@ public class GrabContainerCarrier : MonoBehaviour
 
             if (rb == null) continue;
 
-            // If the item is grabbed, let the player control it
+            // If the item is currently being grabbed by the player, do not force its position
             if (info.grab != null && info.grab.IsGrabbed) continue;
 
-            // Target pose = container transform * stored local pose
+            // Calculate target world position: Container Transform + Stored Offset
             Vector3 targetPos = transform.TransformPoint(info.localOffset);
             Quaternion targetRot = transform.rotation * info.localRotation;
 
-            // Move via physics API to avoid teleporting
+            // Move via physics API to avoid teleporting (smoother interactions)
             rb.MovePosition(targetPos);
             rb.MoveRotation(targetRot);
         }
@@ -185,7 +199,7 @@ public class GrabContainerCarrier : MonoBehaviour
 
     private void OnDisable()
     {
-        // Clean restore: parents and collision state
+        // Safety Clean-up: If the script is disabled, release all items
         foreach (var kv in _inside)
         {
             var rb = kv.Key;
@@ -201,9 +215,11 @@ public class GrabContainerCarrier : MonoBehaviour
         _inside.Clear();
     }
 
+    // --- Helper Methods ---
+
     private bool IsMyTriggerEvent(Collider other)
     {
-        // Guard just in case; this script should only receive events from our trigger
+        // Ensure this script only responds to events from its specific trigger
         return containerTrigger != null && other != null;
     }
 
@@ -221,6 +237,7 @@ public class GrabContainerCarrier : MonoBehaviour
         return false;
     }
 
+    // Loops through all colliders of the item and all colliders of the container to ignore/restore collision
     private void ToggleIgnoreCollisions(Rigidbody itemRb, bool ignore)
     {
         if (itemRb == null) return;
@@ -238,6 +255,7 @@ public class GrabContainerCarrier : MonoBehaviour
     }
 
 #if UNITY_EDITOR
+    // Visual aid in the editor to see the trigger volume
     private void OnDrawGizmosSelected()
     {
         if (containerTrigger is BoxCollider box)

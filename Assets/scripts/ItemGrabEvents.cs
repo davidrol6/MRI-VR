@@ -1,3 +1,12 @@
+/* * SCRIPT SUMMARY:
+ * This script bridges the gap between VR interaction events (Grab/Release) and the logical "Slot" system.
+ * * * How it works:
+ * - It exposes public methods (OnGrabBegin, OnGrabEnd) intended to be called by Unity Events from the VR SDK (e.g., OVRGrabbable or XR Interaction Toolkit).
+ * - When an object is grabbed, it automatically detects if it was "snapped" into a Slot.
+ * - If it was in a slot, it forces the object to detach (un-parent) and resets the slot's state so it becomes free again.
+ * - It maintains a public "IsGrabbed" property used by other scripts (like the GrabContainerCarrier) to know if the player is controlling the object.
+ */
+
 using UnityEngine;
 
 public class ItemGrabEvents : MonoBehaviour
@@ -10,31 +19,34 @@ public class ItemGrabEvents : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-assign Item component if not set manually
+        // Auto-assign Item component if not set manually in the Inspector
         if (item == null) 
             item = GetComponent<Item>();
     }
 
+    // --- Interaction Callbacks ---
     // Connect this to the SDK's "On Select/Grab Begin" event
     public void OnGrabBegin()
     {
         IsGrabbed = true;
 
-        // If the item was sitting in a slot, detach it
+        // Logic: If the player picks up an item that is currently snapped into a slot, we must "undock" it immediately.
         if (item.inSlot)
         {
             var parentSlot = item.currentSlot;
             if (parentSlot != null)
             {
+                // 1. Tell the slot it is now empty
                 parentSlot.ItemInSlot = null;
                 item.inSlot = false;
 
-                // Detach from slot's transform
+                // 2. Detach the item physically (remove it from the slot's hierarchy)
                 transform.parent = null;
 
-                // Restore slot UI visuals
+                // 3. Restore the slot's visual state (e.g., remove highlight)
                 parentSlot.ResetColor();
 
+                // 4. Clear the item's reference to the slot
                 item.currentSlot = null;
             }
         }
@@ -44,6 +56,7 @@ public class ItemGrabEvents : MonoBehaviour
     public void OnGrabEnd()
     {
         IsGrabbed = false;
-        // Slots check for this state inside their trigger and will snap the item back in automatically.
+        // Note: We don't need to handle snapping here. 
+        // The Slot scripts themselves detect collisions and check IsGrabbed == false to snap items in automatically.
     }
 }

@@ -1,3 +1,11 @@
+/* * SCRIPT SUMMARY:
+ * This script turns a GameObject into a physical button that reacts to direct contact (like a VR finger poke).
+ * * * How it works:
+ * - It requires a Collider marked as "IsTrigger" to detect when another object enters its volume.
+ * - When poked (OnTriggerEnter), it visually depresses (animates) and triggers a specific game Objective.
+ * - It includes "debounce" logic (cooldowns) to prevent accidental double-presses or jittery inputs common in VR physics.
+ */
+
 using UnityEngine;
 using System.Collections;
 
@@ -7,22 +15,23 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
     public enum PressMode { Toggle, Hold }
 
     [Header("Objective Logic")]
-    public ObjectiveManager objectiveManager;
-    public string objectiveDescription;
+    public ObjectiveManager objectiveManager; // Reference to the core game logic
+    public string objectiveDescription;       // The specific task ID to complete
 
     [Header("Button Behavior")]
     public PressMode pressMode = PressMode.Toggle;
-    public float minHoldBeforeRelease = 0.1f;
-    public float inputCooldown = 0.15f;
+    public float minHoldBeforeRelease = 0.1f; // Minimum time the button must be held to register a release
+    public float inputCooldown = 0.15f;       // Time in seconds to ignore new inputs after a press (Debouncing)
 
     [Header("Visual Feedback (optional)")]
     public bool animateButton = true;
-    public Transform buttonVisual;
-    public Vector3 pressOffset = new Vector3(0, -0.01f, 0);
+    public Transform buttonVisual;            // The mesh that visually moves
+    public Vector3 pressOffset = new Vector3(0, -0.01f, 0); // Direction and distance of the push
     [Min(0.001f)] public float buttonSpeed = 0.2f;
     public AnimationCurve buttonEase = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public bool snapAtEnd = true;
 
+    // Internal state tracking
     private bool _isPressed;
     private float _pressStamp;
     private float _lastInputTime;
@@ -32,10 +41,11 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
 
     private void Awake()
     {
-        // Use trigger collider to detect finger/contact without applying forces
+        // specific logic to ensure the collider is a Trigger (detects entry without physical resistance)
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
 
+        // Calculate visual positions relative to the parent
         if (buttonVisual != null)
         {
             _btnRestLocalPos = buttonVisual.localPosition;
@@ -43,12 +53,14 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         }
     }
 
+    // Unity Physics Event: Called when a collider (e.g., player finger) touches the button
     private void OnTriggerEnter(Collider other)
     {
-        // Optionally filter by tag (e.g. "Finger" or "Hand") if needed
+        // Note: You can add a tag check here (e.g., if (other.CompareTag("Hand"))) to filter inputs
         OnPress();
     }
 
+    // Unity Physics Event: Called when the collider stops touching the button
     private void OnTriggerExit(Collider other)
     {
         OnRelease();
@@ -58,6 +70,7 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
 
     public void OnPress()
     {
+        // Ignore input if already pressed or if we are inside the cooldown window
         if (_isPressed) return;
         if (Time.time - _lastInputTime < inputCooldown) return;
 
@@ -65,17 +78,21 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         _pressStamp = Time.time;
         _lastInputTime = Time.time;
 
+        // Visual feedback: Push the button in
         if (animateButton && buttonVisual != null)
             StartMoveButton(_btnPressedLocalPos);
 
         Debug.Log($"Physical poke detected on {gameObject.name}");
 
+        // Game Logic
         if (pressMode == PressMode.Toggle)
         {
+            // Trigger once per press
             TriggerObjective();
         }
         else if (pressMode == PressMode.Hold)
         {
+            // Trigger repeatedly while held
             StartCoroutine(HoldRoutine());
         }
     }
@@ -83,11 +100,14 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
     public void OnRelease()
     {
         if (!_isPressed) return;
+        
+        // Prevent "flicker" releases if the physical interaction was too short
         if (Time.time - _pressStamp < minHoldBeforeRelease) return;
 
         _isPressed = false;
         _lastInputTime = Time.time;
 
+        // Visual feedback: Return button to rest position
         if (animateButton && buttonVisual != null)
             StartMoveButton(_btnRestLocalPos);
 
@@ -113,12 +133,13 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         }
     }
 
+    // Coroutine for Hold mode: triggers the objective repeatedly (e.g., every 0.5s)
     private IEnumerator HoldRoutine()
     {
         while (_isPressed)
         {
             TriggerObjective();
-            yield return new WaitForSeconds(0.5f); // repeat while held
+            yield return new WaitForSeconds(0.5f); 
         }
     }
 
@@ -130,10 +151,13 @@ public class PhysicalPokeObjectiveTrigger : MonoBehaviour
         _buttonRoutine = StartCoroutine(MoveButton(dest));
     }
 
+    // Smoothly interpolates the visual mesh position
     private IEnumerator MoveButton(Vector3 dest)
     {
         Vector3 start = buttonVisual.localPosition;
         float totalDist = Vector3.Distance(start, dest);
+        
+        // Avoid division by zero
         float duration = Mathf.Max(0.0001f, totalDist / buttonSpeed);
         float t = 0f;
 
