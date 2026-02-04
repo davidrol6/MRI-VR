@@ -1,9 +1,9 @@
 [Licensing::Module] Trying to connect to existing licensing client channel...
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol" at "2026-02-04T15:28:56.8998688Z"
 Built from '6000.2/respin/6000.2.6f2-cc51a95c03' branch; Version is '6000.2.6f2 (4a4dcaec6541) revision 4869578'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol" at "2026-02-04T19:16:56.517332Z"
 OS: 'Windows 11  (10.0.26200) 64bit Professional' Language: 'en' Physical Memory: 31886 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
-Date: 2026-02-04T15:28:56Z
+Date: 2026-02-04T19:16:56Z
 
 COMMAND LINE ARGUMENTS:
 C:\Program Files\Unity\Hub\Editor\6000.2.6f2\Editor\Unity.exe
@@ -17,7 +17,7 @@ C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI
 -logFile
 Logs/AssetImportWorker3.log
 -srvPort
-64166
+53941
 -licensingIpc
 LicenseClient-davidrol
 -job-worker-count
@@ -65,27 +65,27 @@ C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [69752]  Target information:
+Player connection [60656]  Target information:
 
-Player connection [69752]  * "[IP] 192.168.1.36 [Port] 0 [Flags] 2 [Guid] 4181271179 [EditorId] 4181271179 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-SJEBV0R) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [60656]  * "[IP] 192.168.1.36 [Port] 0 [Flags] 2 [Guid] 3715892315 [EditorId] 3715892315 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-SJEBV0R) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [69752] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [69752] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [60656] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [60656] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 15
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
 [Physics::Module] Id: 0xdecafbad
-[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 44320, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 33204, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
 [Licensing::Module] LicensingClient has failed validation; ignoring
 [Licensing::Client] Handshaking with LicensingClient:
   Version:                 1.17.4+4293ba1
-  Session Id:              d5db031a3b6b4629a8ae8142f2982a5b
-  Correlation Id:          71014103ee10cd6c3173ebd19bf59f7d
-  External correlation Id: 1666732830157519960
+  Session Id:              5a424c0c657447c6b621b03f2ebc0b88
+  Correlation Id:          1c2e74b6a686ae2ae97a290a7153bb1e
+  External correlation Id: 6498030295024093687
   Machine Id:              BmlOz2uT1vY1mqdYKEPCCKI3j3Y=
-[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-davidrol" (connect: 0.00s, validation: 0.00s, handshake: 0.12s)
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol-notifications" at "2026-02-04T15:28:57.0177767Z"
-[Licensing::Module] Licensing Background thread has ended after 0.12s
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-davidrol" (connect: 0.00s, validation: 0.00s, handshake: 0.04s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol-notifications" at "2026-02-04T19:16:56.5594438Z"
+[Licensing::Module] Licensing Background thread has ended after 0.04s
 Library Redirect Path: Library/
 [Physics::Module] Selected backend.
 [Physics::Module] Name: PhysX
@@ -93,9 +93,9 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 873.08 ms, found 19 plugins.
+Refreshing native plugins compatible for Editor in 922.96 ms, found 19 plugins.
 Unity memory allocator detected: MetaXRAudio native memory allocations will be tracked.
-Preloading 2 native plugins for Editor in 4.00 ms.
+Preloading 2 native plugins for Editor in 2.67 ms.
 Initialize engine version: 6000.2.6f2 (4a4dcaec6541)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI/Assets
@@ -139,7 +139,7 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56864
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56592
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
@@ -151,4 +151,280 @@ Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/E
   Type: Assigned
   Expiration: Unlimited
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
-Registered in 0.554858 seconds.
+Registered in 0.470405 seconds.
+- Loaded All Assemblies, in 10.286 seconds
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 314 ms
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.677 seconds
+Domain Reload Profiling: 10960ms
+	BeginReloadAssembly (9173ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (0ms)
+	RebuildCommonClasses (35ms)
+	RebuildNativeTypeToScriptingClass (13ms)
+	initialDomainReloadingComplete (519ms)
+	LoadAllAssembliesAndSetupDomain (542ms)
+		LoadAssemblies (9186ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (525ms)
+			TypeCache.Refresh (523ms)
+				TypeCache.ScanAssembly (510ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (677ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (649ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (417ms)
+			SetLoadedEditorAssemblies (4ms)
+			BeforeProcessingInitializeOnLoad (63ms)
+			ProcessInitializeOnLoadAttributes (117ms)
+			ProcessInitializeOnLoadMethodAttributes (47ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+========================================================================
+Worker process is ready to serve import requests
+Import Worker Mode flag is 0x00
+Begin MonoManager ReloadAssembly
+[Licensing::Client] Successfully resolved entitlement details
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in 18.232 seconds
+Script 'CharacterController' has the same name as built-in Unity component.
+AddComponent and GetComponent will not work with this script.
+'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindow.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindowDetailsExtension.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindowCollectionsPageExtension.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 96.94 ms, found 19 plugins.
+Shader 'Universal Render Pipeline/Terrain/Lit': fallback shader 'Hidden/Universal Render Pipeline/FallbackError' not found
+Shader 'Universal Render Pipeline/Terrain/Lit': dependency 'AddPassShader' shader 'Hidden/Universal Render Pipeline/Terrain/Lit (Add Pass)' not found
+Shader 'Universal Render Pipeline/Terrain/Lit': dependency 'BaseMapShader' shader 'Hidden/Universal Render Pipeline/Terrain/Lit (Base Pass)' not found
+Shader 'Universal Render Pipeline/Terrain/Lit': dependency 'BaseMapGenShader' shader 'Hidden/Universal Render Pipeline/Terrain/Lit (Basemap Gen)' not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Package Manager log level set to [2]
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Refreshing native plugins compatible for Editor in 17.33 ms, found 19 plugins.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    29    0    29    0     0    137      0 --:--:-- --:--:-- --:--:--   139
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-MRI_VR_TEST
+Mono: successfully reloaded assembly
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] Unable to send message (not connected to server process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+- Finished resetting the current domain, in  1.742 seconds
+Domain Reload Profiling: 19962ms
+	BeginReloadAssembly (234ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (6ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (43ms)
+	RebuildCommonClasses (37ms)
+	RebuildNativeTypeToScriptingClass (13ms)
+	initialDomainReloadingComplete (43ms)
+	LoadAllAssembliesAndSetupDomain (17892ms)
+		LoadAssemblies (17450ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (537ms)
+			TypeCache.Refresh (411ms)
+				TypeCache.ScanAssembly (382ms)
+			BuildScriptInfoCaches (106ms)
+			ResolveRequiredComponents (14ms)
+	FinalizeReload (1742ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1520ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (7ms)
+			SetLoadedEditorAssemblies (7ms)
+			BeforeProcessingInitializeOnLoad (151ms)
+			ProcessInitializeOnLoadAttributes (1169ms)
+			ProcessInitializeOnLoadMethodAttributes (179ms)
+			AfterProcessingInitializeOnLoad (6ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (5ms)
+WARNING: Shader Unsupported: 'Hidden/Universal Render Pipeline/Terrain/Lit (Base Pass)' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+WARNING: Shader Unsupported: 'Hidden/Universal Render Pipeline/Terrain/Lit (Base Pass)' - All subshaders removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
+Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
+Shader 'Meta/MRUK/Scene/HighlightsAndShadows': fallback shader 'Off' not found
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.02 seconds
+Refreshing native plugins compatible for Editor in 26.40 ms, found 19 plugins.
+Preloading 2 native plugins for Editor in 4.58 ms.
+Unloading 20 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 9832 unused Assets / (4.6 MB). Loaded Objects now: 10634.
+Memory consumption went from 179.2 MB to 174.5 MB.
+Total: 19.837400 ms (FindLiveObjects: 2.139100 ms CreateObjectMapping: 0.616100 ms MarkObjects: 13.230900 ms  DeleteObjects: 3.849800 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 270541.339866 seconds.
+  path: Assets/Models/Materials/Diseño sin título (2).mat
+  artifactKey: Guid(e1eb48932e86bd44e9a8e5e47fbc69a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Models/Materials/Diseño sin título (2).mat using Guid(e1eb48932e86bd44e9a8e5e47fbc69a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter)State comes from an incompatible keyword space
+Expected: From shader: 'Meta/Lit' Keyword count: 76 Keywords: STEREO_INSTANCING_ON UNITY_SINGLE_PASS_STEREO STEREO_MULTIVIEW_ON STEREO_CUBEMAP_RENDER_ON _GLOSSYREFLECTIONS_OFF _METALLICSPECGLOSSMAP _OCCLUSIONMAP _NORMALMAP _EMISSION INSTANCING_ON FOG_LINEAR FOG_EXP FOG_EXP2 DIRECTIONAL LIGHTPROBE_SH SHADOWS_SHADOWMASK DYNAMICLIGHTMAP_ON LIGHTMAP_ON LIGHTMAP_SHADOW_MIXING DIRLIGHTMAP_COMBINED SHADOWS_SCREEN VERTEXLIGHT_ON POINT SPOT POINT_COOKIE DIRECTIONAL_COOKIE SHADOWS_DEPTH SHADOWS_SOFT SHADOWS_CUBE UNITY_HDR_ON EDITOR_VISUALIZATION _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS EVALUATE_SH_MIXED EVALUATE_SH_VERTEX _LIGHT_LAYERS _CLUSTER_LIGHT_LOOP _FOVEATED_RENDERING_NON_UNIFORM_RASTER USE_LEGACY_LIGHTMAPS LOD_FADE_CROSSFADE PROBE_VOLUMES_L1 PROBE_VOLUMES_L2 DOTS_INSTANCING_ON _PARALLAXMAP _RECEIVE_SHADOWS_OFF _DETAIL_MULX2 _DETAIL_SCALED _ADDITIONAL_LIGHT_SHADOWS _REFLECTION_PROBE_BLENDING _REFLECTION_PROBE_BOX_PROJECTION _REFLECTION_PROBE_ATLAS _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH _SCREEN_SPACE_OCCLUSION _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3 _LIGHT_COOKIES _WRITE_RENDERING_LAYERS LIGHTMAP_BICUBIC_SAMPLING DEBUG_DISPLAY _SURFACE_TYPE_TRANSPARENT _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULARHIGHLIGHTS_OFF _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP _CASTING_PUNCTUAL_LIGHT_SHADOW _SPECGLOSSMAP
+Actual: From shader: 'Universal Render Pipeline/Lit' Keyword count: 66 Keywords: STEREO_INSTANCING_ON UNITY_SINGLE_PASS_STEREO STEREO_MULTIVIEW_ON STEREO_CUBEMAP_RENDER_ON _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS EVALUATE_SH_MIXED EVALUATE_SH_VERTEX _LIGHT_LAYERS _CLUSTER_LIGHT_LOOP _FOVEATED_RENDERING_NON_UNIFORM_RASTER LIGHTMAP_SHADOW_MIXING SHADOWS_SHADOWMASK DIRLIGHTMAP_COMBINED LIGHTMAP_ON DYNAMICLIGHTMAP_ON USE_LEGACY_LIGHTMAPS LOD_FADE_CROSSFADE PROBE_VOLUMES_L1 PROBE_VOLUMES_L2 DOTS_INSTANCING_ON FOG_LINEAR FOG_EXP FOG_EXP2 INSTANCING_ON _NORMALMAP _PARALLAXMAP _RECEIVE_SHADOWS_OFF _DETAIL_MULX2 _DETAIL_SCALED _ADDITIONAL_LIGHT_SHADOWS _REFLECTION_PROBE_BLENDING _REFLECTION_PROBE_BOX_PROJECTION _REFLECTION_PROBE_ATLAS _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH _SCREEN_SPACE_OCCLUSION _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3 _LIGHT_COOKIES _WRITE_RENDERING_LAYERS LIGHTMAP_BICUBIC_SAMPLING DEBUG_DISPLAY _SURFACE_TYPE_TRANSPARENT _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON _EMISSION _METALLICSPECGLOSSMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _OCCLUSIONMAP _SPECULARHIGHLIGHTS_OFF _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP _CASTING_PUNCTUAL_LIGHT_SHADOW _RENDER_PASS_ENABLED _GBUFFER_NORMALS_OCT EDITOR_VISUALIZATION _SPECGLOSSMAP _ADD_PRECOMPUTED_VELOCITY
+0x00007ff9d34250ae (Unity) StackWalker::ShowCallstack
+0x00007ff9d34349b9 (Unity) PlatformStacktrace::GetStacktrace
+0x00007ff9d46a865e (Unity) Stacktrace::GetStacktrace
+0x00007ff9d4c7e95f (Unity) DebugStringToFile
+0x00007ff9d4c7e519 (Unity) AssertImplementation
+0x00007ff9d3105620 (Unity) keywords::LocalKeywordState::ReportIncompatibleKeywordSpace
+0x00007ff9d310543f (Unity) keywords::LocalKeywordState::Remove
+0x00007ff9d3125dbf (Unity) ShaderLab::Pass::ComputePassValuesHash
+0x00007ff9d30d01bc (Unity) Material::UpdateHashes
+0x00007ff9d30c45e4 (Unity) Material::ForceHashesUpdate
+0x00007ff9d4cfbd51 (Unity) Shader::SetGlobalRenderPipeline
+0x00007ff9d25853e4 (Unity) Shader_Set_Custom_PropGlobalRenderPipeline
+0x000001295849b6aa (Mono JIT Code) (wrapper managed-to-native) UnityEngine.Shader:set_globalRenderPipeline_Injected (UnityEngine.Bindings.ManagedSpanWrapper&)
+0x000001295849b58b (Mono JIT Code) UnityEngine.Shader:set_globalRenderPipeline (string)
+0x000001295744dbfb (Mono JIT Code) UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset)
+0x000001295744d67b (Mono JIT Code) UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object,Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle)
+0x000001295744da38 (Mono JIT Code) (wrapper runtime-invoke) <Module>:runtime_invoke_void_object_intptr_object_AtomicSafetyHandle (object,intptr,intptr,intptr)
+0x00007ffa218c6e7e (mono-2.0-bdwgc) mono_jit_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/mini/mini-runtime.c:3445)
+0x00007ffa21808874 (mono-2.0-bdwgc) do_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3068)
+0x00007ffa21808960 (mono-2.0-bdwgc) mono_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3115)
+0x00007ff9d334fcc4 (Unity) scripting_method_invoke
+0x00007ff9d3328263 (Unity) ScriptingInvocation::Invoke
+0x00007ff9d3323965 (Unity) ScriptingInvocation::Invoke<void>
+0x00007ff9d34a125f (Unity) Scripting::UnityEngine::Rendering::RenderPipelineManagerProxy::DoRenderLoop_Internal
+0x00007ff9d2f1a344 (Unity) ScriptableRenderContext::ExtractAndExecuteRenderPipeline
+0x00007ff9d2c4bbde (Unity) Camera::CustomRenderWithPipeline
+0x00007ff9d2c590ad (Unity) Camera::StandaloneCustomRender
+0x00007ff9d2c59328 (Unity) Camera::StandaloneRender
+0x00007ff9d2c52f0f (Unity) CameraScripting::Render
+0x00007ff9d25c76a9 (Unity) Camera_CUSTOM_Render
+0x000001295744d57a (Mono JIT Code) (wrapper managed-to-native) UnityEngine.Camera:Render_Injected (intptr)
+0x000001295744d4db (Mono JIT Code) UnityEngine.Camera:Render ()
+0x000001295744c8db (Mono JIT Code) UnityEditor.PreviewRenderUtility:Render (bool,bool)
+0x00000129574497a3 (Mono JIT Code) UnityEditor.MaterialEditor:DoRenderPreview (UnityEditor.PreviewRenderUtility,bool)
+0x0000012957433c5b (Mono JIT Code) UnityEditor.MaterialEditor:RenderStaticPreview (string,UnityEngine.Object[],int,int)
+0x000001295741d94d (Mono JIT Code) UnityEditor.AssetPreviewUpdater:CreatePreview (UnityEngine.Object,UnityEngine.Object[],string,int,int)
+0x000001295741d653 (Mono JIT Code) UnityEditor.AssetPreviewUpdater:CreatePreviewForAsset (UnityEngine.Object,UnityEngine.Object[],string)
+0x000001295741d710 (Mono JIT Code) (wrapper runtime-invoke) <Module>:runtime_invoke_object_object_object_object (object,intptr,intptr,intptr)
+0x00007ffa218c6e7e (mono-2.0-bdwgc) mono_jit_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/mini/mini-runtime.c:3445)
+0x00007ffa21808874 (mono-2.0-bdwgc) do_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3068)
+0x00007ffa21808960 (mono-2.0-bdwgc) mono_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3115)
+0x00007ff9d334fcc4 (Unity) scripting_method_invoke
+0x00007ff9d3328263 (Unity) ScriptingInvocation::Invoke
+0x00007ff9d4829e0f (Unity) MonoCreateAssetPreview
+0x00007ff9d482aaaa (Unity) WriteAssetPreviewToFile
+0x00007ff9d482af69 (Unity) WritePreviews
+0x00007ff9d4828ad3 (Unity) PreviewImporter::GenerateAssetData
+0x00007ff9d488807f (Unity) ImportToObjects
+0x00007ff9d4886f32 (Unity) ImportAsset
+0x00007ff9d48aa609 (Unity) AssetImportWorker::Import
+0x00007ff9d4917d73 (Unity) <lambda_87ac509f952b3a21fceb5af0e15c55b4>::operator()
+0x00007ff9d495702f (Unity) asio::detail::completion_handler<core::mutable_function<void __cdecl(void)>,asio::io_context::basic_executor_type<std::allocator<void>,0> >::do_complete
+0x00007ff9d49447f1 (Unity) asio::detail::win_iocp_io_context::do_one
+0x00007ff9d4945b34 (Unity) asio::detail::win_iocp_io_context::run
+0x00007ff9d4955699 (Unity) IOService::Run
+0x00007ff9d4927e0f (Unity) AssetImportWorkerClient::Run
+0x00007ff9d48ebf01 (Unity) RunAssetImportWorkerClientV2
+0x00007ff9d48ebf7b (Unity) RunAssetImporterV2
+0x00007ff9d40d24a0 (Unity) Application::InitializeProject
+0x00007ff9d46b4935 (Unity) UnityMain
+0x00007ff7e0232f2a (Unity) __scrt_common_main_seh
+0x00007ffb09bce8d7 (KERNEL32) BaseThreadInitThunk
+0x00007ffb0a44c40c (ntdll) RtlUserThreadStart
+
+Keyword state size mismatch (76 vs 66 keywords)
+KeywordSpace: From shader: 'Meta/Lit' Keyword count: 76 Keywords: STEREO_INSTANCING_ON UNITY_SINGLE_PASS_STEREO STEREO_MULTIVIEW_ON STEREO_CUBEMAP_RENDER_ON _GLOSSYREFLECTIONS_OFF _METALLICSPECGLOSSMAP _OCCLUSIONMAP _NORMALMAP _EMISSION INSTANCING_ON FOG_LINEAR FOG_EXP FOG_EXP2 DIRECTIONAL LIGHTPROBE_SH SHADOWS_SHADOWMASK DYNAMICLIGHTMAP_ON LIGHTMAP_ON LIGHTMAP_SHADOW_MIXING DIRLIGHTMAP_COMBINED SHADOWS_SCREEN VERTEXLIGHT_ON POINT SPOT POINT_COOKIE DIRECTIONAL_COOKIE SHADOWS_DEPTH SHADOWS_SOFT SHADOWS_CUBE UNITY_HDR_ON EDITOR_VISUALIZATION _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS EVALUATE_SH_MIXED EVALUATE_SH_VERTEX _LIGHT_LAYERS _CLUSTER_LIGHT_LOOP _FOVEATED_RENDERING_NON_UNIFORM_RASTER USE_LEGACY_LIGHTMAPS LOD_FADE_CROSSFADE PROBE_VOLUMES_L1 PROBE_VOLUMES_L2 DOTS_INSTANCING_ON _PARALLAXMAP _RECEIVE_SHADOWS_OFF _DETAIL_MULX2 _DETAIL_SCALED _ADDITIONAL_LIGHT_SHADOWS _REFLECTION_PROBE_BLENDING _REFLECTION_PROBE_BOX_PROJECTION _REFLECTION_PROBE_ATLAS _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH _SCREEN_SPACE_OCCLUSION _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3 _LIGHT_COOKIES _WRITE_RENDERING_LAYERS LIGHTMAP_BICUBIC_SAMPLING DEBUG_DISPLAY _SURFACE_TYPE_TRANSPARENT _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULARHIGHLIGHTS_OFF _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP _CASTING_PUNCTUAL_LIGHT_SHADOW _SPECGLOSSMAP
+0x00007ff9d34250ae (Unity) StackWalker::ShowCallstack
+0x00007ff9d34349b9 (Unity) PlatformStacktrace::GetStacktrace
+0x00007ff9d46a865e (Unity) Stacktrace::GetStacktrace
+0x00007ff9d4c7e95f (Unity) DebugStringToFile
+0x00007ff9d4c7e519 (Unity) AssertImplementation
+0x00007ff9d3105904 (Unity) keywords::LocalKeywordState::ReportMismatchingKeywordStateSize
+0x00007ff9d3105454 (Unity) keywords::LocalKeywordState::Remove
+0x00007ff9d3125dbf (Unity) ShaderLab::Pass::ComputePassValuesHash
+0x00007ff9d30d01bc (Unity) Material::UpdateHashes
+0x00007ff9d30c45e4 (Unity) Material::ForceHashesUpdate
+0x00007ff9d4cfbd51 (Unity) Shader::SetGlobalRenderPipeline
+0x00007ff9d25853e4 (Unity) Shader_Set_Custom_PropGlobalRenderPipeline
+0x000001295849b6aa (Mono JIT Code) (wrapper managed-to-native) UnityEngine.Shader:set_globalRenderPipeline_Injected (UnityEngine.Bindings.ManagedSpanWrapper&)
+0x000001295849b58b (Mono JIT Code) UnityEngine.Shader:set_globalRenderPipeline (string)
+0x000001295744dbfb (Mono JIT Code) UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset)
+0x000001295744d67b (Mono JIT Code) UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object,Unity.Collections.LowLevel.Unsafe.AtomicSafetyHandle)
+0x000001295744da38 (Mono JIT Code) (wrapper runtime-invoke) <Module>:runtime_invoke_void_object_intptr_object_AtomicSafetyHandle (object,intptr,intptr,intptr)
+0x00007ffa218c6e7e (mono-2.0-bdwgc) mono_jit_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/mini/mini-runtime.c:3445)
+0x00007ffa21808874 (mono-2.0-bdwgc) do_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3068)
+0x00007ffa21808960 (mono-2.0-bdwgc) mono_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3115)
+0x00007ff9d334fcc4 (Unity) scripting_method_invoke
+0x00007ff9d3328263 (Unity) ScriptingInvocation::Invoke
+0x00007ff9d3323965 (Unity) ScriptingInvocation::Invoke<void>
+0x00007ff9d34a125f (Unity) Scripting::UnityEngine::Rendering::RenderPipelineManagerProxy::DoRenderLoop_Internal
+0x00007ff9d2f1a344 (Unity) ScriptableRenderContext::ExtractAndExecuteRenderPipeline
+0x00007ff9d2c4bbde (Unity) Camera::CustomRenderWithPipeline
+0x00007ff9d2c590ad (Unity) Camera::StandaloneCustomRender
+0x00007ff9d2c59328 (Unity) Camera::StandaloneRender
+0x00007ff9d2c52f0f (Unity) CameraScripting::Render
+0x00007ff9d25c76a9 (Unity) Camera_CUSTOM_Render
+0x000001295744d57a (Mono JIT Code) (wrapper managed-to-native) UnityEngine.Camera:Render_Injected (intptr)
+0x000001295744d4db (Mono JIT Code) UnityEngine.Camera:Render ()
+0x000001295744c8db (Mono JIT Code) UnityEditor.PreviewRenderUtility:Render (bool,bool)
+0x00000129574497a3 (Mono JIT Code) UnityEditor.MaterialEditor:DoRenderPreview (UnityEditor.PreviewRenderUtility,bool)
+0x0000012957433c5b (Mono JIT Code) UnityEditor.MaterialEditor:RenderStaticPreview (string,UnityEngine.Object[],int,int)
+0x000001295741d94d (Mono JIT Code) UnityEditor.AssetPreviewUpdater:CreatePreview (UnityEngine.Object,UnityEngine.Object[],string,int,int)
+0x000001295741d653 (Mono JIT Code) UnityEditor.AssetPreviewUpdater:CreatePreviewForAsset (UnityEngine.Object,UnityEngine.Object[],string)
+0x000001295741d710 (Mono JIT Code) (wrapper runtime-invoke) <Module>:runtime_invoke_object_object_object_object (object,intptr,intptr,intptr)
+0x00007ffa218c6e7e (mono-2.0-bdwgc) mono_jit_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/mini/mini-runtime.c:3445)
+0x00007ffa21808874 (mono-2.0-bdwgc) do_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3068)
+0x00007ffa21808960 (mono-2.0-bdwgc) mono_runtime_invoke (at C:/build/output/Unity-Technologies/mono/mono/metadata/object.c:3115)
+0x00007ff9d334fcc4 (Unity) scripting_method_invoke
+0x00007ff9d3328263 (Unity) ScriptingInvocation::Invoke
+0x00007ff9d4829e0f (Unity) MonoCreateAssetPreview
+0x00007ff9d482aaaa (Unity) WriteAssetPreviewToFile
+0x00007ff9d482af69 (Unity) WritePreviews
+0x00007ff9d4828ad3 (Unity) PreviewImporter::GenerateAssetData
+0x00007ff9d488807f (Unity) ImportToObjects
+0x00007ff9d4886f32 (Unity) ImportAsset
+0x00007ff9d48aa609 (Unity) AssetImportWorker::Import
+0x00007ff9d4917d73 (Unity) <lambda_87ac509f952b3a21fceb5af0e15c55b4>::operator()
+0x00007ff9d495702f (Unity) asio::detail::completion_handler<core::mutable_function<void __cdecl(void)>,asio::io_context::basic_executor_type<std::allocator<void>,0> >::do_complete
+0x00007ff9d49447f1 (Unity) asio::detail::win_iocp_io_context::do_one
+0x00007ff9d4945b34 (Unity) asio::detail::win_iocp_io_context::run
+0x00007ff9d4955699 (Unity) IOService::Run
+0x00007ff9d4927e0f (Unity) AssetImportWorkerClient::Run
+0x00007ff9d48ebf01 (Unity) RunAssetImportWorkerClientV2
+0x00007ff9d48ebf7b (Unity) RunAssetImporterV2
+0x00007ff9d40d24a0 (Unity) Application::InitializeProject
+0x00007ff9d46b4935 (Unity) UnityMain
+0x00007ff7e0232f2a (Unity) __scrt_common_main_seh
+0x00007ffb09bce8d7 (KERNEL32) BaseThreadInitThunk
+0x00007ffb0a44c40c (ntdll) RtlUserThreadStart
+
+ -> (artifact id: '5ee5ebfe671f97f18c49686e8171ce4f') in 2.0850546 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
