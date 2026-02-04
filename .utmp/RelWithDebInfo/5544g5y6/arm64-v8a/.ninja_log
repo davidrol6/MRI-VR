@@ -1,0 +1,23 @@
+# ninja log v5
+8	1991	7906944677513910	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	d15f74910475ed7c
+68	460	7906944662240779	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6a8ebc9c286f9d1d
+460	700	7906944664481282	C:/Users/dexty/OneDrive/Escritorio/TFG/TFG-MRI/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5544g5y6/obj/arm64-v8a/libswappywrapper.so	1dda40a9b22f169d
+1992	2099	7906944678641578	C:/Users/dexty/OneDrive/Escritorio/TFG/TFG-MRI/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5544g5y6/obj/arm64-v8a/libgame.so	acc2fd1546ebaf55
+53	1877	7906944676402184	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	f9cc1fde6d41347b
+15	1572	7906944673346673	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	af17e8ab368c9f25
+38	1585	7906944673423896	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	85ae37178e6ade1b
+45	1623	7906944673862230	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	21f76273aaa0eff4
+22	1683	7906944674474433	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	98ecf61482b24994
+60	1860	7906944676220930	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	7013dd76e012d57b
+31	1622	7906944673776772	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	21acdbd97fbbfe8a
+65	467	7907874133790471	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6a8ebc9c286f9d1d
+467	718	7907874136135486	C:/Users/dexty/OneDrive/Escritorio/TFG/TFG-MRI/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5544g5y6/obj/arm64-v8a/libswappywrapper.so	1dda40a9b22f169d
+40	1476	7907874143832483	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	85ae37178e6ade1b
+27	1478	7907874143852688	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	af17e8ab368c9f25
+15	1506	7907874144150258	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	21acdbd97fbbfe8a
+48	1527	7907874144313023	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	21f76273aaa0eff4
+20	1567	7907874144769025	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	98ecf61482b24994
+54	1715	7907874146267936	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	7013dd76e012d57b
+34	1726	7907874146350281	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	f9cc1fde6d41347b
+7	1842	7907874147484967	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	d15f74910475ed7c
+1842	1949	7907874148595455	C:/Users/dexty/OneDrive/Escritorio/TFG/TFG-MRI/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/5544g5y6/obj/arm64-v8a/libgame.so	acc2fd1546ebaf55
