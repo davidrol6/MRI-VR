@@ -1,9 +1,9 @@
 [Licensing::Module] Trying to connect to existing licensing client channel...
 Built from '6000.2/respin/6000.2.6f2-cc51a95c03' branch; Version is '6000.2.6f2 (4a4dcaec6541) revision 4869578'; Using compiler version '194234433'; Build Type 'Release'
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol" at "2026-02-04T19:19:33.208561Z"
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol" at "2026-02-04T22:04:21.3815054Z"
 OS: 'Windows 11  (10.0.26200) 64bit Professional' Language: 'en' Physical Memory: 31886 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
-Date: 2026-02-04T19:19:33Z
+Date: 2026-02-04T22:04:21Z
 
 COMMAND LINE ARGUMENTS:
 C:\Program Files\Unity\Hub\Editor\6000.2.6f2\Editor\Unity.exe
@@ -17,7 +17,7 @@ C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI
 -logFile
 Logs/AssetImportWorker7.log
 -srvPort
-50173
+60565
 -job-worker-count
 15
 -background-job-worker-count
@@ -63,37 +63,43 @@ C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [33412]  Target information:
+Player connection [81728]  Target information:
 
-Player connection [33412]  * "[IP] 192.168.1.36 [Port] 0 [Flags] 2 [Guid] 3383546947 [EditorId] 3383546947 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-SJEBV0R) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [81728]  * "[IP] 192.168.1.36 [Port] 0 [Flags] 2 [Guid] 2508662572 [EditorId] 2508662572 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-SJEBV0R) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [33412] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [33412] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [81728] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [81728] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 15
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
 [Physics::Module] Id: 0xdecafbad
+Library Redirect Path: Library/
 [Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 33204, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
 [Licensing::Module] LicensingClient has failed validation; ignoring
 [Licensing::Client] Handshaking with LicensingClient:
   Version:                 1.17.4+4293ba1
-  Session Id:              6a02c83a432d4275ae57aa53104fbf7d
+  Session Id:              649da61edb4e4a8bb80d5cb8ecbc6137
   Correlation Id:          1c2e74b6a686ae2ae97a290a7153bb1e
-  External correlation Id: 6741685322844903304
+  External correlation Id: 6585851858840326050
   Machine Id:              BmlOz2uT1vY1mqdYKEPCCKI3j3Y=
-[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-davidrol" (connect: 0.00s, validation: 0.00s, handshake: 0.03s)
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol-notifications" at "2026-02-04T19:19:33.239365Z"
-[Licensing::Module] Licensing Background thread has ended after 0.03s
-Library Redirect Path: Library/
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-davidrol" (connect: 0.00s, validation: 0.00s, handshake: 0.08s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-davidrol-notifications" at "2026-02-04T22:04:21.4654599Z"
+[Licensing::Module] Licensing Background thread has ended after 0.08s
 [Physics::Module] Selected backend.
 [Physics::Module] Name: PhysX
 [Physics::Module] Id: 0xf2b8ea05
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 24.13 ms, found 19 plugins.
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 6872676466591-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Refreshing native plugins compatible for Editor in 31.59 ms, found 21 plugins.
 Unity memory allocator detected: MetaXRAudio native memory allocations will be tracked.
-Preloading 2 native plugins for Editor in 1.73 ms.
+Preloading 3 native plugins for Editor in 9.49 ms.
 Initialize engine version: 6000.2.6f2 (4a4dcaec6541)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/davidrol/Unity-Projects/TFG-2026/TFG-MRI/Assets
@@ -114,54 +120,48 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56872
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56072
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-[Licensing::Client] Successfully resolved entitlement details
-[Licensing::Module] License group:
-  Id: 6872676466591-UnityPersXXXX
-  Product: Unity Personal
-  Type: Assigned
-  Expiration: Unlimited
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
-Registered in 0.003525 seconds.
-- Loaded All Assemblies, in  0.285 seconds
+Registered in 0.002721 seconds.
+- Loaded All Assemblies, in  0.280 seconds
 Native extension for Android target not found
-Android Extension - Scanning For ADB Devices 205 ms
+Android Extension - Scanning For ADB Devices 245 ms
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.496 seconds
-Domain Reload Profiling: 779ms
-	BeginReloadAssembly (91ms)
+- Finished resetting the current domain, in  0.532 seconds
+Domain Reload Profiling: 810ms
+	BeginReloadAssembly (95ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (28ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (38ms)
-	LoadAllAssembliesAndSetupDomain (118ms)
-		LoadAssemblies (89ms)
+		CreateAndSetChildDomain (0ms)
+	RebuildCommonClasses (26ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (114ms)
+		LoadAssemblies (92ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (115ms)
-			TypeCache.Refresh (114ms)
-				TypeCache.ScanAssembly (104ms)
+		AnalyzeDomain (111ms)
+			TypeCache.Refresh (110ms)
+				TypeCache.ScanAssembly (101ms)
 			BuildScriptInfoCaches (0ms)
 			ResolveRequiredComponents (0ms)
-	FinalizeReload (496ms)
+	FinalizeReload (532ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (471ms)
+		SetupLoadedEditorAssemblies (487ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (286ms)
-			SetLoadedEditorAssemblies (3ms)
-			BeforeProcessingInitializeOnLoad (48ms)
-			ProcessInitializeOnLoadAttributes (94ms)
-			ProcessInitializeOnLoadMethodAttributes (39ms)
+			InitializePlatformSupportModulesInManaged (320ms)
+			SetLoadedEditorAssemblies (2ms)
+			BeforeProcessingInitializeOnLoad (44ms)
+			ProcessInitializeOnLoadAttributes (86ms)
+			ProcessInitializeOnLoadMethodAttributes (34ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -171,13 +171,13 @@ Worker process is ready to serve import requests
 Import Worker Mode flag is 0x00
 Begin MonoManager ReloadAssembly
 [Licensing::Client] Successfully resolved entitlement details
-- Loaded All Assemblies, in  0.930 seconds
+- Loaded All Assemblies, in  1.138 seconds
 Script 'CharacterController' has the same name as built-in Unity component.
 AddComponent and GetComponent will not work with this script.
 'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindow.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
 'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindowDetailsExtension.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
 'Packages/com.meta.xr.sdk.core/Editor/BuildingBlocks/BlocksWindowCollectionsPageExtension.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
-Refreshing native plugins compatible for Editor in 13.00 ms, found 19 plugins.
+Refreshing native plugins compatible for Editor in 14.97 ms, found 21 plugins.
 Native extension for Android target not found
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
@@ -188,163 +188,10 @@ Package Manager log level set to [2]
 [Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] Unable to send message (not connected to server process).
 [Package Manager] Cannot connect to Unity Package Manager local server
-Refreshing native plugins compatible for Editor in 13.39 ms, found 19 plugins.
+Refreshing native plugins compatible for Editor in 15.39 ms, found 21 plugins.
 [Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] Unable to send message (not connected to server process).
 [Package Manager] Cannot connect to Unity Package Manager local server
 [Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] Unable to send message (not connected to server process).
 [Package Manager] Cannot connect to Unity Package Manager local server
-[MODES] ModeService[none].Initialize
-[MODES] ModeService[none].LoadModes
-[MODES] Loading mode Default (0) for mode-current-id-MRI_VR_TEST
-Mono: successfully reloaded assembly
-[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] Unable to send message (not connected to server process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-[Package Manager] Failed to launch server process. Reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] Unable to send message (not connected to server process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.358 seconds
-Domain Reload Profiling: 2280ms
-	BeginReloadAssembly (129ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (4ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (28ms)
-	RebuildCommonClasses (28ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (35ms)
-	LoadAllAssembliesAndSetupDomain (721ms)
-		LoadAssemblies (401ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (388ms)
-			TypeCache.Refresh (289ms)
-				TypeCache.ScanAssembly (268ms)
-			BuildScriptInfoCaches (80ms)
-			ResolveRequiredComponents (14ms)
-	FinalizeReload (1358ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (1181ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (8ms)
-			SetLoadedEditorAssemblies (7ms)
-			BeforeProcessingInitializeOnLoad (142ms)
-			ProcessInitializeOnLoadAttributes (850ms)
-			ProcessInitializeOnLoadMethodAttributes (168ms)
-			AfterProcessingInitializeOnLoad (5ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (5ms)
-Shader 'Meta/MRUK/Scene/HighlightsAndShadows': fallback shader 'Off' not found
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
-Refreshing native plugins compatible for Editor in 27.29 ms, found 19 plugins.
-Preloading 2 native plugins for Editor in 0.15 ms.
-Unloading 19 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 9832 unused Assets / (6.5 MB). Loaded Objects now: 10634.
-Memory consumption went from 180.7 MB to 174.2 MB.
-Total: 26.274500 ms (FindLiveObjects: 2.828100 ms CreateObjectMapping: 2.191300 ms MarkObjects: 14.432200 ms  DeleteObjects: 6.820700 ms)
-
-========================================================================
-Received Import Request.
-  Time since last request: 270926.128810 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/1024x1024/WhiteDirt/LightSwitches01.prefab
-  artifactKey: Guid(1e1a6e53c2ffd4c8c963f564019e6eca) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/1024x1024/WhiteDirt/LightSwitches01.prefab using Guid(1e1a6e53c2ffd4c8c963f564019e6eca) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '007bf3a764b808fee5e8f70abbb2cbc2') in 0.9406435 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 42
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000029 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/2048x2048/Black/LightSwitches02.prefab
-  artifactKey: Guid(d172e9a794f9c4c4980f4ae5ac52ba55) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/2048x2048/Black/LightSwitches02.prefab using Guid(d172e9a794f9c4c4980f4ae5ac52ba55) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5dcae3d0e8b3554b6c71b3f4da7a47d2') in 0.023227 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 47
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000033 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/1024x1024/White/LightSwitches02.prefab
-  artifactKey: Guid(6970bb01121c4408998223c011d63f68) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/1024x1024/White/LightSwitches02.prefab using Guid(6970bb01121c4408998223c011d63f68) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'cc9eec0ad008efe4adb8cfc89f0ec4c2') in 0.0686438 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000025 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/1024x1024/WhiteDirt/LightSwitches02.prefab
-  artifactKey: Guid(09de4e3fbf1eb4b0e8b3559fa3c6d840) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/1024x1024/WhiteDirt/LightSwitches02.prefab using Guid(09de4e3fbf1eb4b0e8b3559fa3c6d840) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '7a23b25bc345d63bbf52786e9b3a984e') in 0.0244691 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000023 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/512x512/White/LightSwitches02.prefab
-  artifactKey: Guid(9a9eafa92ee0f46f285a5f89bd668d05) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/512x512/White/LightSwitches02.prefab using Guid(9a9eafa92ee0f46f285a5f89bd668d05) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5ed7e74217676542f62b6b812a908ae5') in 0.0673442 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000025 seconds.
-  path: Assets/SocketsAndSwitches/Models/LightSwitches02.fbx
-  artifactKey: Guid(f4979408603c04d3292b9e903f5a16b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Models/LightSwitches02.fbx using Guid(f4979408603c04d3292b9e903f5a16b2) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'ecc5b451a05b05508946e393ef1bd2b8') in 0.1626883 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 18
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000036 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/512x512/Black/LightSwitches02.prefab
-  artifactKey: Guid(10167dad683b6485d936cbac0d9b7ae8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/512x512/Black/LightSwitches02.prefab using Guid(10167dad683b6485d936cbac0d9b7ae8) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '838433158376969e64599f4530bfd168') in 0.0541023 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000022 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/2048x2048/WhiteDirt/LightSwitches02.prefab
-  artifactKey: Guid(ba4a49445c07a4f21a28863d57960492) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/2048x2048/WhiteDirt/LightSwitches02.prefab using Guid(ba4a49445c07a4f21a28863d57960492) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '74ca707174a5cd32b9ae248ed10a4531') in 0.0983783 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000023 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/128x128/Black/LightSwitches02.prefab
-  artifactKey: Guid(f0e35199af836459f8485b998fe6a051) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/128x128/Black/LightSwitches02.prefab using Guid(f0e35199af836459f8485b998fe6a051) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '4e8ac61ac81b8f2b25e9640fa3e06327') in 0.0519108 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000032 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/2048x2048/White/LightSwitches01.prefab
-  artifactKey: Guid(b668065cdb3474cc7b77ca4ec18d455e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/2048x2048/White/LightSwitches01.prefab using Guid(b668065cdb3474cc7b77ca4ec18d455e) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '8f78a79ec154d471148211039f5280a2') in 0.0274587 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 42
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000043 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/128x128/BlackDirt/LightSwitches02.prefab
-  artifactKey: Guid(0e17b4107c4a64a15ac4d54fd7cd7b62) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/128x128/BlackDirt/LightSwitches02.prefab using Guid(0e17b4107c4a64a15ac4d54fd7cd7b62) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b1d0d04d4e465e15924ef70c6cdd23ef') in 0.1250204 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000020 seconds.
-  path: Assets/SocketsAndSwitches/Prefabs/512x512/BlackDirt/LightSwitches02.prefab
-  artifactKey: Guid(629d7d4ee03f94afc9b04b9e5ad8e5c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/SocketsAndSwitches/Prefabs/512x512/BlackDirt/LightSwitches02.prefab using Guid(629d7d4ee03f94afc9b04b9e5ad8e5c4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'a2af45eac13985f0313d61b6cc8f2ac0') in 0.0824246 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 55
-
-Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
-AssetImportWorker is now disconnected from the server
-Process exiting
-Exiting without the bug reporter. Application will terminate with return code 0
