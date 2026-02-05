@@ -34,18 +34,11 @@ public class CreateHost : MonoBehaviour
 
 
     [Header("UI Elements - Toggles")]
-    public Toggle resetToggle;
-    public Toggle updateToggle;
-    public Toggle startToggle;
     public Toggle createHostToggle;
     public Toggle searchLobbyToggle;
     public Toggle prevToggle;
     public Toggle nextToggle;
     //public Toggle connectToggle;
-
-    [Header("UI Elements - GameObjects")]
-    public GameObject configuration;
-    public GameObject online;
 
     [Header("UI References - Status")]
     [Tooltip("Texto para mostrar el estado actual")]
@@ -568,14 +561,7 @@ private async Task JoinOrCreateLobby()
 
     private void finishConnection() {
             connectLabel.text = "Conectado";
-            if (resetToggle != null)
-                resetToggle.interactable = true;
             
-            if (updateToggle != null)
-                updateToggle.interactable = true;
-            
-            if (startToggle != null)
-                startToggle.interactable = true;
 
             if (createHostToggle != null)
                 createHostToggle.interactable = false;

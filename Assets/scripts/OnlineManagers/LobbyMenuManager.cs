@@ -31,9 +31,6 @@ public class LobbyMenuManager : MonoBehaviour
     public Toggle nextButton;
 
     [Header("UI Elements - Toggles")]
-    public Toggle resetToggle;
-    public Toggle updateToggle;
-    public Toggle startToggle;
     public Toggle createHostToggle;
     public Toggle disconnectToggle;
     
@@ -316,7 +313,7 @@ public class LobbyMenuManager : MonoBehaviour
             return;
         }
 
-        GameObject row = Instantiate(lobbyRowPrefab, parentSlot);
+        GameObject row = Instantiate(lobbyRowPrefab, parentSlot, false);
 
         TMP_Text lobbyNameText = FindChildByName(row.transform, "LobbyName")?.GetComponent<TMP_Text>();
         TMP_Text playersText = FindChildByName(row.transform, "Players")?.GetComponent<TMP_Text>();
@@ -557,14 +554,7 @@ public class LobbyMenuManager : MonoBehaviour
 
 
     private void finishConnection() {
-        if (resetToggle != null)
-            resetToggle.interactable = true;
-        
-        if (updateToggle != null)
-            updateToggle.interactable = true;
-        
-        if (startToggle != null)
-            startToggle.interactable = true;
+
 
         if (createHostToggle != null)
             createHostToggle.interactable = true;
@@ -584,14 +574,7 @@ public class LobbyMenuManager : MonoBehaviour
     }
 
     private void enableToggles() {
-        if (resetToggle != null)
-            resetToggle.interactable = false;
-        
-        if (updateToggle != null)
-            updateToggle.interactable = false;
-        
-        if (startToggle != null)
-            startToggle.interactable = false;
+      
 
         if (createHostToggle != null)
             createHostToggle.interactable = true;
