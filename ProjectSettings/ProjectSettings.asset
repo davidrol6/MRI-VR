@@ -876,11 +876,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: c24a06fd-63cc-42f9-b396-3cbd358f3eef
+  cloudProjectId: f6b7edb7-721a-4bc2-aa8e-740afeb2afb3
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: TFG-MRI
-  organizationId: davidrol19
+  projectName: MRI_VR_TEST (2)
+  organizationId: dextynxx
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
